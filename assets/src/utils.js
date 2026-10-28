@@ -8,6 +8,7 @@ export const CURRENCY = settings.currency || '৳';
 export const TODAY = settings.today || new Date().toISOString().slice( 0, 10 );
 export const PRODUCTS_URL = settings.productsUrl || '';
 export const SETTINGS_URL = settings.settingsUrl || '';
+export const SETUP_DONE = Boolean( settings.setupDone );
 
 const locale = settings.locale || undefined;
 

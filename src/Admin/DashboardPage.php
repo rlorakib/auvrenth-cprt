@@ -1,32 +1,37 @@
 <?php
 /**
- * WooCommerce → Munafa dashboard page.
+ * WooCommerce → Munafa and Munafa Settings pages.
  *
  * @package Munafa
  */
 
 namespace Munafa\Admin;
 
-use Munafa\Settings\Options;
+use Munafa\Settings\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Admin page that hosts the React dashboard.
+ * Admin pages that host the React app: the dashboard and the settings screen.
  */
 final class DashboardPage {
 
 	/**
-	 * Admin page slug.
+	 * Dashboard page slug.
 	 */
 	const SLUG = 'munafa';
 
 	/**
-	 * Hook suffix returned by add_submenu_page().
-	 *
-	 * @var string
+	 * Settings page slug.
 	 */
-	private static $hook_suffix = '';
+	const SETTINGS_SLUG = 'munafa-settings';
+
+	/**
+	 * Hook suffixes returned by add_submenu_page(), mapped to the view they show.
+	 *
+	 * @var array<string, string>
+	 */
+	private static $views = array();
 
 	/**
 	 * Register hooks.
@@ -38,33 +43,62 @@ final class DashboardPage {
 	}
 
 	/**
-	 * Add the page under the WooCommerce menu.
+	 * URL of the settings page.
+	 */
+	public static function settings_url(): string {
+		return admin_url( 'admin.php?page=' . self::SETTINGS_SLUG );
+	}
+
+	/**
+	 * Add both pages under the WooCommerce menu.
 	 */
 	public static function add_menu(): void {
-		self::$hook_suffix = (string) add_submenu_page(
+		$dashboard = add_submenu_page(
 			'woocommerce',
 			__( 'Munafa – Profit dashboard', 'munafa' ),
 			__( 'Munafa', 'munafa' ),
 			'manage_woocommerce',
 			self::SLUG,
-			array( self::class, 'render' )
+			array( self::class, 'render_dashboard' )
+		);
+		$settings  = add_submenu_page(
+			'woocommerce',
+			__( 'Munafa settings', 'munafa' ),
+			__( 'Munafa Settings', 'munafa' ),
+			'manage_woocommerce',
+			self::SETTINGS_SLUG,
+			array( self::class, 'render_settings' )
+		);
+
+		self::$views = array_filter(
+			array(
+				(string) $dashboard => 'dashboard',
+				(string) $settings  => 'settings',
+			)
 		);
 	}
 
 	/**
-	 * Page markup; React mounts into the div.
+	 * Dashboard markup; React mounts into the div.
 	 */
-	public static function render(): void {
-		echo '<div class="wrap"><div id="munafa-dashboard"></div></div>';
+	public static function render_dashboard(): void {
+		echo '<div class="wrap"><div id="munafa-dashboard" data-view="dashboard"></div></div>';
 	}
 
 	/**
-	 * Load the dashboard bundle on this page only.
+	 * Settings markup; React mounts into the div.
+	 */
+	public static function render_settings(): void {
+		echo '<div class="wrap"><div id="munafa-dashboard" data-view="settings"></div></div>';
+	}
+
+	/**
+	 * Load the app bundle on Munafa's pages only.
 	 *
 	 * @param string $hook_suffix Current admin page.
 	 */
 	public static function enqueue( $hook_suffix ): void {
-		if ( '' === self::$hook_suffix || $hook_suffix !== self::$hook_suffix ) {
+		if ( ! isset( self::$views[ $hook_suffix ] ) ) {
 			return;
 		}
 
@@ -89,6 +123,8 @@ final class DashboardPage {
 		wp_enqueue_style( 'wp-components' );
 		if ( file_exists( MUNAFA_PATH . 'assets/build/style-index.css' ) ) {
 			wp_enqueue_style( 'munafa-dashboard', MUNAFA_URL . 'assets/build/style-index.css', array( 'wp-components' ), $asset['version'] );
+			// The build writes style-index-rtl.css for right-to-left languages such as Urdu.
+			wp_style_add_data( 'munafa-dashboard', 'rtl', 'replace' );
 		}
 
 		wp_add_inline_script(
@@ -96,10 +132,11 @@ final class DashboardPage {
 			'window.munafaSettings = ' . wp_json_encode(
 				array(
 					// WooCommerce stores symbols as HTML entities ("&#2547;"); React prints text as is.
-					'currency'    => html_entity_decode( Options::currency_symbol(), ENT_QUOTES, 'UTF-8' ),
+					'currency'    => html_entity_decode( Settings::currency_symbol(), ENT_QUOTES, 'UTF-8' ),
 					'decimals'    => wc_get_price_decimals(),
 					'productsUrl' => admin_url( 'edit.php?post_type=product' ),
-					'settingsUrl' => admin_url( 'admin.php?page=wc-settings&tab=munafa' ),
+					'settingsUrl' => self::settings_url(),
+					'setupDone'   => Settings::is_setup_done(),
 					'startOfWeek' => (int) get_option( 'start_of_week', 1 ),
 					'today'       => wp_date( 'Y-m-d' ),
 					'locale'      => str_replace( '_', '-', get_user_locale() ),

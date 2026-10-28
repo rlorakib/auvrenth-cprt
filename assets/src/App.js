@@ -12,7 +12,7 @@ import KpiCards from './components/KpiCards';
 import ProductsTable from './components/ProductsTable';
 import ReturnsReport from './components/ReturnsReport';
 import TrendChart from './components/TrendChart';
-import { PRODUCTS_URL, SETTINGS_URL, presetRange } from './utils';
+import { PRODUCTS_URL, SETTINGS_URL, SETUP_DONE, presetRange } from './utils';
 
 /**
  * GET a Munafa report.
@@ -86,6 +86,21 @@ export default function App() {
 			{ error && (
 				<Notice status="error" isDismissible={ false }>
 					{ error }
+				</Notice>
+			) }
+
+			{ ! SETUP_DONE && (
+				<Notice status="warning" isDismissible={ false }>
+					{ __(
+						'Munafa is not set up yet, so courier charges and fees in these numbers may be wrong.',
+						'munafa'
+					) }{ ' ' }
+					<a href={ SETTINGS_URL }>
+						{ __(
+							'Set up courier zones and payment fees',
+							'munafa'
+						) }
+					</a>
 				</Notice>
 			) }
 

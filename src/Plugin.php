@@ -36,29 +36,19 @@ final class Plugin {
 		}
 
 		Db\Installer::maybe_upgrade();
+		// Late on init, once WooCommerce can list its payment gateways.
+		add_action( 'init', array( Settings\Settings::class, 'maybe_migrate' ), 20 );
 
 		Orders\ReturnStatus::register();
 		Orders\Sync::register();
 		Tools\Recalculator::register();
 		Rest\ReportsController::register();
+		Rest\SettingsController::register();
 
 		if ( is_admin() ) {
 			Admin\DashboardPage::register();
 			Orders\MetaBox::register();
 			Products\CostField::register();
-			// SettingsPage extends WC_Settings_Page, which only exists inside this filter, so don't touch the class before it.
-			add_filter( 'woocommerce_get_settings_pages', array( self::class, 'add_settings_page' ) );
 		}
-	}
-
-	/**
-	 * Add the Munafa tab to WooCommerce → Settings.
-	 *
-	 * @param array $pages Settings pages.
-	 * @return array
-	 */
-	public static function add_settings_page( $pages ) {
-		$pages[] = new Settings\SettingsPage();
-		return $pages;
 	}
 }

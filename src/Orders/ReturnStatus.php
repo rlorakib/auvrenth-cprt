@@ -22,21 +22,6 @@ final class ReturnStatus {
 	const STATUS = 'returned';
 
 	/**
-	 * Return reasons, keyed by the value stored in order meta.
-	 *
-	 * @return array<string, string>
-	 */
-	public static function reasons(): array {
-		return array(
-			'customer_refused' => __( 'Customer refused', 'munafa' ),
-			'wrong_address'    => __( 'Wrong address', 'munafa' ),
-			'phone_off'        => __( 'Phone off / unreachable', 'munafa' ),
-			'not_available'    => __( 'Customer not available', 'munafa' ),
-			'other'            => __( 'Other', 'munafa' ),
-		);
-	}
-
-	/**
 	 * Register hooks.
 	 */
 	public static function register(): void {

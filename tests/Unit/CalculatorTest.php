@@ -16,36 +16,35 @@ use PHPUnit\Framework\TestCase;
 final class CalculatorTest extends TestCase {
 
 	/**
-	 * Calculator with typical BD settings.
+	 * Calculate an order on top of typical COD settings: ৳60 delivery, 1% COD charge, 50% return charge.
 	 *
-	 * @param array $overrides Settings to change.
+	 * @param array $order Order numbers to change.
 	 */
-	private function calculator( array $overrides = array() ): Calculator {
-		return new Calculator(
+	private function calculate( array $order ): array {
+		return ( new Calculator() )->calculate(
 			array_merge(
 				array(
-					'courier_inside_dhaka'  => 60,
-					'courier_outside_dhaka' => 120,
-					'cod_fee_percent'       => 1,
-					'gateway_fee_percent'   => 2,
-					'return_charge_percent' => 50,
-					'packaging_cost'        => 0,
+					'total'          => 0,
+					'item_costs'     => array(),
+					'is_cod'         => true,
+					'fee_percent'    => 1,
+					'courier_charge' => 60,
+					'return_percent' => 50,
+					'packaging_cost' => 0,
 				),
-				$overrides
+				$order
 			)
 		);
 	}
 
 	/**
-	 * COD order delivered inside Dhaka.
+	 * Delivered COD order.
 	 */
-	public function test_cod_order_inside_dhaka(): void {
-		$result = $this->calculator()->calculate(
+	public function test_cod_order(): void {
+		$result = $this->calculate(
 			array(
-				'total'        => 1060,
-				'item_costs'   => array( 400, 200 ),
-				'is_cod'       => true,
-				'inside_dhaka' => true,
+				'total'      => 1060,
+				'item_costs' => array( 400, 200 ),
 			)
 		);
 
@@ -59,16 +58,17 @@ final class CalculatorTest extends TestCase {
 	}
 
 	/**
-	 * Online paid order delivered outside Dhaka, with tax.
+	 * Online paid order with tax and a different zone charge.
 	 */
-	public function test_online_order_outside_dhaka(): void {
-		$result = $this->calculator()->calculate(
+	public function test_online_order(): void {
+		$result = $this->calculate(
 			array(
-				'total'        => 2150,
-				'tax'          => 150,
-				'item_costs'   => array( 1200 ),
-				'is_cod'       => false,
-				'inside_dhaka' => false,
+				'total'          => 2150,
+				'tax'            => 150,
+				'item_costs'     => array( 1200 ),
+				'is_cod'         => false,
+				'fee_percent'    => 2,
+				'courier_charge' => 120,
 			)
 		);
 
@@ -83,13 +83,11 @@ final class CalculatorTest extends TestCase {
 	 * Refunds reduce revenue.
 	 */
 	public function test_refund_reduces_revenue(): void {
-		$result = $this->calculator()->calculate(
+		$result = $this->calculate(
 			array(
-				'total'        => 1000,
-				'refunded'     => 300,
-				'item_costs'   => array( 350 ),
-				'is_cod'       => true,
-				'inside_dhaka' => true,
+				'total'      => 1000,
+				'refunded'   => 300,
+				'item_costs' => array( 350 ),
 			)
 		);
 
@@ -101,12 +99,10 @@ final class CalculatorTest extends TestCase {
 	 * Items without a cost are flagged and counted as zero.
 	 */
 	public function test_missing_cost_is_flagged(): void {
-		$result = $this->calculator()->calculate(
+		$result = $this->calculate(
 			array(
-				'total'        => 500,
-				'item_costs'   => array( 200, null ),
-				'is_cod'       => true,
-				'inside_dhaka' => true,
+				'total'      => 500,
+				'item_costs' => array( 200, null ),
 			)
 		);
 
@@ -118,12 +114,10 @@ final class CalculatorTest extends TestCase {
 	 * A free order still pays the courier but no percentage fee.
 	 */
 	public function test_zero_total_order(): void {
-		$result = $this->calculator()->calculate(
+		$result = $this->calculate(
 			array(
-				'total'        => 0,
-				'item_costs'   => array( 150 ),
-				'is_cod'       => true,
-				'inside_dhaka' => false,
+				'item_costs'     => array( 150 ),
+				'courier_charge' => 120,
 			)
 		);
 
@@ -135,13 +129,11 @@ final class CalculatorTest extends TestCase {
 	 * A returned COD order earns nothing and loses the courier charge both ways.
 	 */
 	public function test_returned_cod_order(): void {
-		$result = $this->calculator()->calculate(
+		$result = $this->calculate(
 			array(
-				'total'        => 1000,
-				'item_costs'   => array( 500, null ),
-				'is_cod'       => true,
-				'inside_dhaka' => true,
-				'is_returned'  => true,
+				'total'       => 1000,
+				'item_costs'  => array( 500, null ),
+				'is_returned' => true,
 			)
 		);
 
@@ -158,13 +150,14 @@ final class CalculatorTest extends TestCase {
 	 * A returned online order also loses the payment fee.
 	 */
 	public function test_returned_online_order_keeps_gateway_fee(): void {
-		$result = $this->calculator()->calculate(
+		$result = $this->calculate(
 			array(
-				'total'        => 1000,
-				'item_costs'   => array( 500 ),
-				'is_cod'       => false,
-				'inside_dhaka' => false,
-				'is_returned'  => true,
+				'total'          => 1000,
+				'item_costs'     => array( 500 ),
+				'is_cod'         => false,
+				'fee_percent'    => 2,
+				'courier_charge' => 120,
+				'is_returned'    => true,
 			)
 		);
 
@@ -174,36 +167,32 @@ final class CalculatorTest extends TestCase {
 	}
 
 	/**
-	 * An order's own courier charge replaces the default and drives the return charge.
+	 * The return charge follows the order's own courier charge and the zone's percentage.
 	 */
-	public function test_courier_override(): void {
-		$result = $this->calculator()->calculate(
+	public function test_return_charge_uses_zone_percent(): void {
+		$result = $this->calculate(
 			array(
-				'total'            => 1000,
-				'item_costs'       => array( 500 ),
-				'is_cod'           => true,
-				'inside_dhaka'     => true,
-				'is_returned'      => true,
-				'courier_override' => 150,
+				'total'          => 1000,
+				'item_costs'     => array( 500 ),
+				'courier_charge' => 150,
+				'return_percent' => 100,
+				'is_returned'    => true,
 			)
 		);
 
-		$this->assertSame( 150.0, $result['courier_cost'] );
-		$this->assertSame( 75.0, $result['return_cost'] );
-		$this->assertSame( -225.0, $result['net_profit'] );
+		$this->assertSame( 150.0, $result['return_cost'] );
+		$this->assertSame( -300.0, $result['net_profit'] );
 	}
 
 	/**
-	 * A zero courier override means free delivery, not "use the default".
+	 * Free delivery costs nothing.
 	 */
-	public function test_zero_courier_override(): void {
-		$result = $this->calculator()->calculate(
+	public function test_zero_courier_charge(): void {
+		$result = $this->calculate(
 			array(
-				'total'            => 1000,
-				'item_costs'       => array( 500 ),
-				'is_cod'           => true,
-				'inside_dhaka'     => true,
-				'courier_override' => 0,
+				'total'          => 1000,
+				'item_costs'     => array( 500 ),
+				'courier_charge' => 0,
 			)
 		);
 
@@ -215,16 +204,14 @@ final class CalculatorTest extends TestCase {
 	 * Packaging is a cost on delivered and returned orders alike.
 	 */
 	public function test_packaging_on_every_order(): void {
-		$calculator = $this->calculator( array( 'packaging_cost' => 15 ) );
-		$order      = array(
-			'total'        => 1000,
-			'item_costs'   => array( 500 ),
-			'is_cod'       => true,
-			'inside_dhaka' => true,
+		$order = array(
+			'total'          => 1000,
+			'item_costs'     => array( 500 ),
+			'packaging_cost' => 15,
 		);
 
-		$delivered = $calculator->calculate( $order );
-		$returned  = $calculator->calculate( array_merge( $order, array( 'is_returned' => true ) ) );
+		$delivered = $this->calculate( $order );
+		$returned  = $this->calculate( array_merge( $order, array( 'is_returned' => true ) ) );
 
 		$this->assertSame( 15.0, $delivered['packaging_cost'] );
 		$this->assertSame( 415.0, $delivered['net_profit'] );

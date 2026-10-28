@@ -8,7 +8,7 @@
 namespace Munafa\Products;
 
 use Munafa\Profit\CostResolver;
-use Munafa\Settings\Options;
+use Munafa\Settings\Settings;
 use WC_Product;
 use WC_Product_Variation;
 use WP_Post;
@@ -43,7 +43,7 @@ final class CostField {
 	 */
 	private static function label(): string {
 		/* translators: %s: currency symbol */
-		return sprintf( __( 'Cost price (%s)', 'munafa' ), Options::currency_symbol() );
+		return sprintf( __( 'Cost price (%s)', 'munafa' ), Settings::currency_symbol() );
 	}
 
 	/**

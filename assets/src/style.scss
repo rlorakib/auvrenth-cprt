@@ -183,6 +183,98 @@ $bad: #b32d2e;
 	}
 }
 
+.munafa-settings {
+	max-width: 960px;
+
+	&__section {
+		margin-bottom: 16px;
+	}
+
+	&__short {
+		max-width: 200px;
+	}
+
+	&__checkboxes {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+		gap: 8px;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+		margin-bottom: 32px;
+	}
+}
+
+.munafa-zones {
+	display: grid;
+	gap: 12px;
+	justify-items: start;
+
+	> * {
+		justify-self: stretch;
+	}
+
+	> .components-button {
+		justify-self: start;
+	}
+}
+
+.munafa-zone {
+	display: grid;
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid $border;
+	border-radius: 4px;
+	background: #f6f7f7;
+
+	&--default {
+		background: #fff;
+	}
+
+	&__header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	&__tools {
+		display: flex;
+		gap: 4px;
+	}
+
+	&__charges {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 240px));
+		gap: 12px;
+	}
+
+	.munafa-card__note {
+		margin: 0;
+	}
+}
+
+.munafa-reasons {
+	display: grid;
+	gap: 8px;
+	justify-items: start;
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		width: 100%;
+		max-width: 480px;
+
+		.components-base-control {
+			flex: 1;
+		}
+	}
+}
+
 .munafa-empty {
 	color: $muted;
 }
@@ -203,7 +295,8 @@ $bad: #b32d2e;
 
 @media (max-width: 782px) {
 	.munafa-kpis,
-	.munafa-dashboard__columns {
+	.munafa-dashboard__columns,
+	.munafa-zone__charges {
 		grid-template-columns: minmax(0, 1fr);
 	}
 }

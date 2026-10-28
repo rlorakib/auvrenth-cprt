@@ -7,12 +7,12 @@ import { formatMoney, formatPercent } from '../utils';
 
 /**
  * @param {Object} props
- * @param {Array}  props.districts Rows per district from `/returns`.
- * @param {Array}  props.reasons   Rows per reason from `/returns`.
+ * @param {Array}  props.areas   Rows per delivery area from `/returns`.
+ * @param {Array}  props.reasons Rows per reason from `/returns`.
  */
-export default function ReturnsReport( { districts, reasons } ) {
-	const withReturns = districts
-		.filter( ( district ) => district.returned > 0 )
+export default function ReturnsReport( { areas, reasons } ) {
+	const withReturns = areas
+		.filter( ( area ) => area.returned > 0 )
 		.sort(
 			( a, b ) => b.return_rate - a.return_rate || b.returned - a.returned
 		)
@@ -61,14 +61,12 @@ export default function ReturnsReport( { districts, reasons } ) {
 						) ) }
 					</ul>
 
-					<h3>
-						{ __( 'Districts with the most returns', 'munafa' ) }
-					</h3>
+					<h3>{ __( 'Areas with the most returns', 'munafa' ) }</h3>
 					<div className="munafa-table-wrap">
 						<table className="widefat striped munafa-table">
 							<thead>
 								<tr>
-									<th>{ __( 'District', 'munafa' ) }</th>
+									<th>{ __( 'Area', 'munafa' ) }</th>
 									<th className="num">
 										{ __( 'Orders', 'munafa' ) }
 									</th>
@@ -84,28 +82,28 @@ export default function ReturnsReport( { districts, reasons } ) {
 								</tr>
 							</thead>
 							<tbody>
-								{ withReturns.map( ( district ) => (
-									<tr key={ district.state || 'unknown' }>
-										<td>{ district.name }</td>
+								{ withReturns.map( ( area ) => (
+									<tr
+										key={ `${ area.country }:${ area.state }` }
+									>
+										<td>{ area.name }</td>
+										<td className="num">{ area.orders }</td>
 										<td className="num">
-											{ district.orders }
-										</td>
-										<td className="num">
-											{ district.returned }
+											{ area.returned }
 										</td>
 										<td
 											className={ `num ${
-												district.return_rate >= 20
+												area.return_rate >= 20
 													? 'is-bad'
 													: ''
 											}` }
 										>
 											{ formatPercent(
-												district.return_rate
+												area.return_rate
 											) }
 										</td>
 										<td className="num is-bad">
-											{ formatMoney( -district.loss ) }
+											{ formatMoney( -area.loss ) }
 										</td>
 									</tr>
 								) ) }

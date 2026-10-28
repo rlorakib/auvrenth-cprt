@@ -9,7 +9,7 @@ namespace Munafa\Profit;
 
 use Munafa\Db\Installer;
 use Munafa\Orders\ReturnStatus;
-use Munafa\Settings\Options;
+use Munafa\Settings\Settings;
 use WC_Order;
 use WC_Order_Refund;
 
@@ -26,7 +26,7 @@ final class OrderProfit {
 	const COURIER_META = '_munafa_courier_cost';
 
 	/**
-	 * Order meta key for why a parcel was returned (a key of ReturnStatus::reasons()).
+	 * Order meta key for why a parcel was returned (a key of Settings::return_reasons()).
 	 */
 	const REASON_META = '_munafa_return_reason';
 
@@ -43,34 +43,35 @@ final class OrderProfit {
 			return;
 		}
 
-		$items       = self::items( $order );
-		$is_returned = ReturnStatus::STATUS === $order->get_status();
-		$calculator  = new Calculator( Options::all() );
-		$breakdown   = $calculator->calculate( self::input( $order, $items, $is_returned ) );
-		$created     = $order->get_date_created();
+		$items                   = self::items( $order );
+		$is_returned             = ReturnStatus::STATUS === $order->get_status();
+		$breakdown               = ( new Calculator() )->calculate( self::input( $order, $items, $is_returned ) );
+		$created                 = $order->get_date_created();
+		list( $country, $state ) = self::delivery_address( $order );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, no WP API for it.
 		$wpdb->replace(
 			Installer::table(),
 			array(
-				'order_id'       => $order->get_id(),
-				'order_date_gmt' => $created ? gmdate( 'Y-m-d H:i:s', $created->getTimestamp() ) : current_time( 'mysql', true ),
-				'order_status'   => $order->get_status(),
-				'payment_method' => $order->get_payment_method(),
-				'delivery_state' => self::delivery_state( $order ),
-				'revenue'        => $breakdown['revenue'],
-				'product_cost'   => $breakdown['product_cost'],
-				'courier_cost'   => $breakdown['courier_cost'],
-				'cod_fee'        => $breakdown['cod_fee'],
-				'gateway_fee'    => $breakdown['gateway_fee'],
-				'return_cost'    => $breakdown['return_cost'],
-				'packaging_cost' => $breakdown['packaging_cost'],
-				'net_profit'     => $breakdown['net_profit'],
-				'return_reason'  => $is_returned ? (string) $order->get_meta( self::REASON_META ) : '',
-				'missing_cost'   => $breakdown['missing_cost'] ? 1 : 0,
-				'calculated_at'  => current_time( 'mysql', true ),
+				'order_id'         => $order->get_id(),
+				'order_date_gmt'   => $created ? gmdate( 'Y-m-d H:i:s', $created->getTimestamp() ) : current_time( 'mysql', true ),
+				'order_status'     => $order->get_status(),
+				'payment_method'   => $order->get_payment_method(),
+				'delivery_country' => $country,
+				'delivery_state'   => $state,
+				'revenue'          => $breakdown['revenue'],
+				'product_cost'     => $breakdown['product_cost'],
+				'courier_cost'     => $breakdown['courier_cost'],
+				'cod_fee'          => $breakdown['cod_fee'],
+				'gateway_fee'      => $breakdown['gateway_fee'],
+				'return_cost'      => $breakdown['return_cost'],
+				'packaging_cost'   => $breakdown['packaging_cost'],
+				'net_profit'       => $breakdown['net_profit'],
+				'return_reason'    => $is_returned ? (string) $order->get_meta( self::REASON_META ) : '',
+				'missing_cost'     => $breakdown['missing_cost'] ? 1 : 0,
+				'calculated_at'    => current_time( 'mysql', true ),
 			),
-			array( '%d', '%s', '%s', '%s', '%s', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%s', '%d', '%s' )
+			array( '%d', '%s', '%s', '%s', '%s', '%s', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%s', '%d', '%s' )
 		);
 
 		self::save_items( $order->get_id(), $items, $is_returned );
@@ -174,26 +175,35 @@ final class OrderProfit {
 	 * @param bool     $is_returned Whether the order was returned.
 	 */
 	private static function input( WC_Order $order, array $items, bool $is_returned ): array {
+		$zone     = self::zone( $order );
+		$method   = Settings::payment_method( $order->get_payment_method() );
+		$override = self::courier_override( $order );
+
 		return array(
-			'total'            => (float) $order->get_total(),
-			'tax'              => (float) $order->get_total_tax(),
-			'refunded'         => (float) $order->get_total_refunded(),
-			'item_costs'       => array_column( $items, 'cost' ),
-			'is_cod'           => 'cod' === $order->get_payment_method(),
-			'inside_dhaka'     => self::inside_dhaka( $order ),
-			'is_returned'      => $is_returned,
-			'courier_override' => self::courier_override( $order ),
+			'total'          => (float) $order->get_total(),
+			'tax'            => (float) $order->get_total_tax(),
+			'refunded'       => (float) $order->get_total_refunded(),
+			'item_costs'     => array_column( $items, 'cost' ),
+			'is_cod'         => $method['is_cod'],
+			'fee_percent'    => $method['fee_percent'],
+			'is_returned'    => $is_returned,
+			'courier_charge' => null === $override ? $zone['delivery_charge'] : $override,
+			'return_percent' => $zone['return_percent'],
+			'packaging_cost' => Settings::packaging_cost(),
 		);
 	}
 
 	/**
-	 * Whether the parcel is delivered inside Dhaka.
+	 * Courier zone the order's delivery address falls in, or "Everywhere else".
 	 *
 	 * @param WC_Order $order Order.
+	 * @return array{id: string, name: string, areas: string[], delivery_charge: float, return_percent: float}
 	 */
-	public static function inside_dhaka( WC_Order $order ): bool {
-		$country = $order->get_shipping_country() ? $order->get_shipping_country() : $order->get_billing_country();
-		return 'BD' === $country && Options::DHAKA_STATE === self::delivery_state( $order );
+	public static function zone( WC_Order $order ): array {
+		list( $country, $state ) = self::delivery_address( $order );
+
+		$zone = ZoneMatcher::match( Settings::zones(), $country, $state );
+		return $zone ? $zone : Settings::default_zone();
 	}
 
 	/**
@@ -207,11 +217,15 @@ final class OrderProfit {
 	}
 
 	/**
-	 * State (district) the parcel goes to: shipping address, or billing when there is none.
+	 * Country and state the parcel goes to: the shipping address, or billing when there is none.
 	 *
 	 * @param WC_Order $order Order.
+	 * @return array{0: string, 1: string}
 	 */
-	private static function delivery_state( WC_Order $order ): string {
-		return $order->get_shipping_state() ? $order->get_shipping_state() : $order->get_billing_state();
+	private static function delivery_address( WC_Order $order ): array {
+		if ( $order->get_shipping_country() ) {
+			return array( $order->get_shipping_country(), (string) $order->get_shipping_state() );
+		}
+		return array( (string) $order->get_billing_country(), (string) $order->get_billing_state() );
 	}
 }

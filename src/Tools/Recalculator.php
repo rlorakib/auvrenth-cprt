@@ -37,7 +37,6 @@ final class Recalculator {
 	 */
 	public static function register(): void {
 		add_action( self::ACTION, array( self::class, 'run_batch' ) );
-		add_action( 'admin_post_munafa_recalculate', array( self::class, 'handle_request' ) );
 		add_action( 'action_scheduler_init', array( self::class, 'maybe_start_after_install' ) );
 	}
 
@@ -94,20 +93,5 @@ final class Recalculator {
 
 		delete_option( Installer::RECALC_OPTION );
 		self::start();
-	}
-
-	/**
-	 * Handle the "Recalculate all orders" button.
-	 */
-	public static function handle_request(): void {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to do this.', 'munafa' ), 403 );
-		}
-
-		check_admin_referer( 'munafa_recalculate' );
-		self::start();
-
-		wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=munafa' ) );
-		exit;
 	}
 }

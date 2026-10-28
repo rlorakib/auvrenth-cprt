@@ -17,7 +17,7 @@ final class Installer {
 	/**
 	 * Bump this when the table schema changes.
 	 */
-	const DB_VERSION = '3';
+	const DB_VERSION = '4';
 
 	/**
 	 * Option that stores the installed schema version.
@@ -65,6 +65,7 @@ final class Installer {
 				order_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				order_status varchar(32) NOT NULL DEFAULT '',
 				payment_method varchar(100) NOT NULL DEFAULT '',
+				delivery_country varchar(2) NOT NULL DEFAULT '',
 				delivery_state varchar(32) NOT NULL DEFAULT '',
 				revenue decimal(19,4) NOT NULL DEFAULT 0,
 				product_cost decimal(19,4) NOT NULL DEFAULT 0,

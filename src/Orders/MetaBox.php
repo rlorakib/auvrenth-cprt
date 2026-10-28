@@ -7,8 +7,9 @@
 
 namespace Munafa\Orders;
 
+use Munafa\Admin\DashboardPage;
 use Munafa\Profit\OrderProfit;
-use Munafa\Settings\Options;
+use Munafa\Settings\Settings;
 use WC_Order;
 use WP_Post;
 
@@ -117,27 +118,35 @@ final class MetaBox {
 	 * @param WC_Order $order Order.
 	 */
 	private static function render_fields( WC_Order $order ): void {
-		$settings = Options::all();
-		$default  = OrderProfit::inside_dhaka( $order ) ? $settings['courier_inside_dhaka'] : $settings['courier_outside_dhaka'];
+		$zone     = OrderProfit::zone( $order );
 		$override = OrderProfit::courier_override( $order );
 		$reason   = (string) $order->get_meta( OrderProfit::REASON_META );
+
+		if ( ! Settings::is_setup_done() ) {
+			printf(
+				'<p class="description" style="color:#996800">%1$s <a href="%2$s">%3$s</a></p>',
+				esc_html__( 'Munafa is not set up yet, so courier charges and fees may be wrong.', 'munafa' ),
+				esc_url( DashboardPage::settings_url() ),
+				esc_html__( 'Set up Munafa', 'munafa' )
+			);
+		}
 		?>
 		<p>
 			<label for="munafa_courier_cost">
 				<?php
 				/* translators: %s: currency symbol */
-				echo esc_html( sprintf( __( 'Courier charge for this order (%s)', 'munafa' ), Options::currency_symbol() ) );
+				echo esc_html( sprintf( __( 'Courier charge for this order (%s)', 'munafa' ), Settings::currency_symbol() ) );
 				?>
 			</label>
 			<input type="number" min="0" step="0.01" class="widefat" id="munafa_courier_cost" name="munafa_courier_cost"
 				value="<?php echo esc_attr( null === $override ? '' : wc_format_decimal( $override ) ); ?>"
-				placeholder="<?php echo esc_attr( sprintf( /* translators: %s: default courier charge */ __( 'Default: %s', 'munafa' ), wc_format_decimal( $default ) ) ); ?>">
+				placeholder="<?php echo esc_attr( sprintf( /* translators: 1: courier zone name, 2: its delivery charge */ __( '%1$s: %2$s', 'munafa' ), $zone['name'], wc_format_decimal( $zone['delivery_charge'] ) ) ); ?>">
 		</p>
 		<p>
 			<label for="munafa_return_reason"><?php esc_html_e( 'Return reason (for returned orders)', 'munafa' ); ?></label>
 			<select class="widefat" id="munafa_return_reason" name="munafa_return_reason">
 				<option value=""><?php esc_html_e( '— None —', 'munafa' ); ?></option>
-				<?php foreach ( ReturnStatus::reasons() as $key => $label ) : ?>
+				<?php foreach ( Settings::return_reasons() as $key => $label ) : ?>
 					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $reason, $key ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
@@ -169,7 +178,7 @@ final class MetaBox {
 			$order->update_meta_data( OrderProfit::COURIER_META, $courier );
 		}
 
-		if ( isset( ReturnStatus::reasons()[ $reason ] ) ) {
+		if ( isset( Settings::return_reasons()[ $reason ] ) ) {
 			$order->update_meta_data( OrderProfit::REASON_META, $reason );
 		} else {
 			$order->delete_meta_data( OrderProfit::REASON_META );

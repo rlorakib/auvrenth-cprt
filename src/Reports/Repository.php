@@ -9,6 +9,7 @@ namespace Munafa\Reports;
 
 use Munafa\Db\Installer;
 use Munafa\Orders\ReturnStatus;
+use Munafa\Settings\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -35,7 +36,7 @@ final class Repository {
 		 *
 		 * @param string[] $statuses Order statuses.
 		 */
-		$statuses = apply_filters( 'munafa_report_statuses', array( 'completed', 'processing', 'on-hold', ReturnStatus::STATUS ) );
+		$statuses = apply_filters( 'munafa_report_statuses', Settings::report_statuses() );
 		return array_values( array_filter( array_map( 'sanitize_key', (array) $statuses ) ) );
 	}
 
@@ -209,15 +210,15 @@ final class Repository {
 		list( $where, $args ) = self::where( $range, 'o' );
 		$table                = Installer::table();
 
-		$districts = $wpdb->get_results(
+		$areas = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT o.delivery_state AS state,
+				"SELECT o.delivery_country AS country, o.delivery_state AS state,
 					COUNT(*) AS orders,
 					SUM( o.order_status = %s ) AS returned,
 					SUM( CASE WHEN o.order_status = %s THEN -o.net_profit ELSE 0 END ) AS loss
 				FROM {$table} o
 				WHERE {$where}
-				GROUP BY o.delivery_state
+				GROUP BY o.delivery_country, o.delivery_state
 				ORDER BY returned DESC, orders DESC",
 				array_merge( array( ReturnStatus::STATUS, ReturnStatus::STATUS ), $args )
 			),
@@ -236,35 +237,67 @@ final class Repository {
 			ARRAY_A
 		);
 
-		$state_names  = WC()->countries->get_states( 'BD' );
-		$reason_names = ReturnStatus::reasons();
+		$reason_names = Settings::return_reasons();
 
 		return array(
-			'districts' => array_map(
-				static function ( $row ) use ( $state_names ) {
+			'areas'   => array_map(
+				static function ( $row ) {
 					$orders = (int) $row['orders'];
 					return array(
+						'country'     => $row['country'],
 						'state'       => $row['state'],
-						'name'        => '' === $row['state'] ? __( 'Unknown', 'munafa' ) : ( $state_names[ $row['state'] ] ?? $row['state'] ),
+						'name'        => self::area_name( $row['country'], $row['state'] ),
 						'orders'      => $orders,
 						'returned'    => (int) $row['returned'],
 						'return_rate' => $orders > 0 ? round( (int) $row['returned'] / $orders * 100, 1 ) : 0.0,
 						'loss'        => round( (float) $row['loss'], 2 ),
 					);
 				},
-				$districts
+				$areas
 			),
-			'reasons'   => array_map(
+			'reasons' => array_map(
 				static function ( $row ) use ( $reason_names ) {
+					if ( '' === $row['reason'] ) {
+						$name = __( 'Not set', 'munafa' );
+					} else {
+						// A reason deleted from the settings still shows its stored key.
+						$name = $reason_names[ $row['reason'] ] ?? $row['reason'];
+					}
 					return array(
 						'reason'   => $row['reason'],
-						'name'     => $reason_names[ $row['reason'] ] ?? __( 'Not set', 'munafa' ),
+						'name'     => $name,
 						'returned' => (int) $row['returned'],
 						'loss'     => round( (float) $row['loss'], 2 ),
 					);
 				},
 				$reasons
 			),
+		);
+	}
+
+	/**
+	 * Readable name of a delivery area, e.g. "Dhaka, Bangladesh".
+	 *
+	 * @param string $country Country code.
+	 * @param string $state   State code.
+	 */
+	private static function area_name( string $country, string $state ): string {
+		if ( '' === $country ) {
+			return __( 'Unknown', 'munafa' );
+		}
+
+		$countries    = WC()->countries->get_countries();
+		$country_name = $countries[ $country ] ?? $country;
+		if ( '' === $state ) {
+			return $country_name;
+		}
+
+		$states = (array) WC()->countries->get_states( $country );
+		return sprintf(
+			/* translators: 1: state or district, 2: country */
+			__( '%1$s, %2$s', 'munafa' ),
+			$states[ $state ] ?? $state,
+			$country_name
 		);
 	}
 

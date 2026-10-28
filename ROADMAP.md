@@ -78,8 +78,23 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 - [x] Return by district + by reason
 - [x] Date range filter (today, 7d, 30d, 90d, this month, custom)
 - [x] Product-wise data er jonno `munafa_order_items` table (DB v3)
-- [ ] ~~Settings page React e~~ WooCommerce settings tab-i thakbe
-- [ ] Browser e nije check: dashboard desktop + mobile, 1 second e load
+- [x] Settings page React e (WooCommerce → Munafa Settings, niche "South Asia ready" dekhun)
+- [x] Browser e nije check: dashboard desktop (full width fix)
+- [ ] Browser e nije check: dashboard mobile, 1 second e load
+
+---
+
+## Phase 3.5 – South Asia ready settings
+
+**Goal:** Code e kono desh er hardcode na, seller nije sob set korbe.
+
+- [x] Courier zones: seller er nijer zone (naam, area = je kono desh er state ba puro desh, delivery charge, return %), prothom milano zone, baki "Everywhere else"
+- [x] Payment method onujayi "COD kina" ar fee %
+- [x] Return reason seller nije edit kore (rename korle purono order e-o thik naam)
+- [x] Report e kon status gona hobe, setting e
+- [x] Purono Dhaka/outside setting theke migration, `setup_done` na hole dashboard/order page e warning
+- [x] Report e "District" → "Area" (desh soho naam), RTL CSS (Urdu)
+- [ ] Browser e nije check: Settings page (zone add/move/remove, save, recalculate)
 
 **Done when:** 500 order er data 1 second er moddhe load hoy, mobile e-o thik dekhay.
 

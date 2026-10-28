@@ -1,0 +1,277 @@
+/**
+ * Settings screen: courier zones, payment fees, return reasons and report options.
+ */
+import apiFetch from '@wordpress/api-fetch';
+import {
+	Button,
+	CheckboxControl,
+	Notice,
+	Spinner,
+	TextControl,
+} from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+
+import { CURRENCY } from '../utils';
+import PaymentMethodsEditor from './PaymentMethodsEditor';
+import ReturnReasonsEditor from './ReturnReasonsEditor';
+import ZonesEditor from './ZonesEditor';
+
+/**
+ * A card with a title and an explanation.
+ *
+ * @param {Object}  props
+ * @param {string}  props.title       Title.
+ * @param {string}  props.description What the section is for.
+ * @param {Element} props.children    Fields.
+ */
+function Section( { title, description, children } ) {
+	return (
+		<section className="munafa-card munafa-settings__section">
+			<div className="munafa-card__header">
+				<h2>{ title }</h2>
+			</div>
+			{ description && (
+				<p className="munafa-card__note">{ description }</p>
+			) }
+			{ children }
+		</section>
+	);
+}
+
+export default function SettingsApp() {
+	const [ data, setData ] = useState( null );
+	const [ settings, setSettings ] = useState( null );
+	const [ saving, setSaving ] = useState( false );
+	const [ notice, setNotice ] = useState( null );
+	const [ recalculating, setRecalculating ] = useState( false );
+
+	useEffect( () => {
+		apiFetch( { path: '/munafa/v1/settings' } )
+			.then( ( response ) => {
+				setData( response );
+				setSettings( response.settings );
+				setRecalculating( response.recalculating );
+			} )
+			.catch( ( error ) =>
+				setNotice( { status: 'error', message: error.message } )
+			);
+	}, [] );
+
+	if ( ! settings ) {
+		return notice ? (
+			<Notice status="error" isDismissible={ false }>
+				{ notice.message }
+			</Notice>
+		) : (
+			<div className="munafa-dashboard__loading">
+				<Spinner />
+			</div>
+		);
+	}
+
+	const update = ( key ) => ( value ) =>
+		setSettings( { ...settings, [ key ]: value } );
+
+	const save = () => {
+		setSaving( true );
+		setNotice( null );
+		apiFetch( {
+			path: '/munafa/v1/settings',
+			method: 'POST',
+			data: settings,
+		} )
+			.then( ( response ) => {
+				setSettings( response.settings );
+				setNotice( {
+					status: 'success',
+					message: __(
+						'Settings saved. Recalculate your orders so old orders use them too.',
+						'munafa'
+					),
+					recalculate: true,
+				} );
+			} )
+			.catch( ( error ) =>
+				setNotice( { status: 'error', message: error.message } )
+			)
+			.finally( () => setSaving( false ) );
+	};
+
+	const recalculate = () => {
+		apiFetch( { path: '/munafa/v1/recalculate', method: 'POST' } )
+			.then( () => {
+				setRecalculating( true );
+				setNotice( {
+					status: 'info',
+					message: __(
+						'Recalculating all orders in the background. This can take a few minutes on big stores.',
+						'munafa'
+					),
+				} );
+			} )
+			.catch( ( error ) =>
+				setNotice( { status: 'error', message: error.message } )
+			);
+	};
+
+	const toggleStatus = ( key, checked ) =>
+		update( 'report_statuses' )(
+			checked
+				? [ ...settings.report_statuses, key ]
+				: settings.report_statuses.filter(
+						( status ) => status !== key
+				  )
+		);
+
+	return (
+		<div className="munafa-dashboard munafa-settings">
+			<header className="munafa-dashboard__header">
+				<h1>{ __( 'Munafa settings', 'munafa' ) }</h1>
+			</header>
+
+			{ ! settings.setup_done && (
+				<Notice status="warning" isDismissible={ false }>
+					{ __(
+						'Welcome! Add the courier charges and payment fees you pay, then save. Until then, profit uses whatever is below and may be wrong.',
+						'munafa'
+					) }
+				</Notice>
+			) }
+
+			{ notice && (
+				<Notice
+					status={ notice.status }
+					onRemove={ () => setNotice( null ) }
+					actions={
+						notice.recalculate && ! recalculating
+							? [
+									{
+										label: __(
+											'Recalculate all orders',
+											'munafa'
+										),
+										onClick: recalculate,
+										variant: 'primary',
+									},
+							  ]
+							: []
+					}
+				>
+					{ notice.message }
+				</Notice>
+			) }
+
+			<Section
+				title={ __( 'Courier zones', 'munafa' ) }
+				description={ __(
+					'What your courier charges you per parcel, by delivery area. Each order uses the first zone that covers its address, or "Everywhere else".',
+					'munafa'
+				) }
+			>
+				<ZonesEditor
+					zones={ settings.zones }
+					defaultZone={ settings.default_zone }
+					countries={ data.choices.countries }
+					onChange={ update( 'zones' ) }
+					onDefaultChange={ update( 'default_zone' ) }
+				/>
+			</Section>
+
+			<Section
+				title={ __( 'Payment methods', 'munafa' ) }
+				description={ __(
+					"Tick the methods where the courier collects cash. Their fee is the courier's COD charge; for the others it is the payment gateway fee.",
+					'munafa'
+				) }
+			>
+				<PaymentMethodsEditor
+					methods={ settings.payment_methods }
+					gateways={ data.choices.gateways }
+					onChange={ update( 'payment_methods' ) }
+				/>
+			</Section>
+
+			<Section
+				title={ __( 'Packaging', 'munafa' ) }
+				description={ __(
+					'Box, poly bag, tape and printing for one parcel. Counted on delivered and returned orders.',
+					'munafa'
+				) }
+			>
+				<TextControl
+					type="number"
+					min="0"
+					step="0.01"
+					className="munafa-settings__short"
+					label={ sprintf(
+						/* translators: %s: currency symbol */
+						__( 'Packaging cost per order (%s)', 'munafa' ),
+						CURRENCY
+					) }
+					value={ settings.packaging_cost }
+					onChange={ update( 'packaging_cost' ) }
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+				/>
+			</Section>
+
+			<Section
+				title={ __( 'Return reasons', 'munafa' ) }
+				description={ __(
+					'Reasons you can pick on a returned order. Renaming one keeps it on old orders.',
+					'munafa'
+				) }
+			>
+				<ReturnReasonsEditor
+					reasons={ settings.return_reasons }
+					onChange={ update( 'return_reasons' ) }
+				/>
+			</Section>
+
+			<Section
+				title={ __( 'Reports', 'munafa' ) }
+				description={ __(
+					'Order statuses that count as sales (and returns) on the dashboard.',
+					'munafa'
+				) }
+			>
+				<div className="munafa-settings__checkboxes">
+					{ data.choices.statuses.map( ( status ) => (
+						<CheckboxControl
+							key={ status.key }
+							label={ status.label }
+							checked={ settings.report_statuses.includes(
+								status.key
+							) }
+							onChange={ ( checked ) =>
+								toggleStatus( status.key, checked )
+							}
+							__nextHasNoMarginBottom
+						/>
+					) ) }
+				</div>
+			</Section>
+
+			<div className="munafa-settings__actions">
+				<Button
+					variant="primary"
+					onClick={ save }
+					isBusy={ saving }
+					disabled={ saving }
+				>
+					{ __( 'Save settings', 'munafa' ) }
+				</Button>
+				<Button
+					variant="secondary"
+					onClick={ recalculate }
+					disabled={ recalculating }
+				>
+					{ recalculating
+						? __( 'Recalculating…', 'munafa' )
+						: __( 'Recalculate all orders', 'munafa' ) }
+				</Button>
+			</div>
+		</div>
+	);
+}

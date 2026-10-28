@@ -10,10 +10,14 @@ The owner communicates in Banglish (Bangla in Latin script). Reply in the same s
 ## Stack
 
 - PHP 7.4+ (OOP, namespaces, PSR-4 via Composer), WordPress 6.5+, WooCommerce 9.0+
-- Admin UI: React via `@wordpress/scripts`, `@wordpress/components`, `@wordpress/dataviews`,
-  `@wordpress/api-fetch`; charts with Recharts
+- Admin UI: React via `@wordpress/scripts`, `@wordpress/components`, `@wordpress/api-fetch`;
+  charts with Recharts. One bundle serves WooCommerce → Munafa (dashboard) and
+  WooCommerce → Munafa Settings (`data-view` on the mount div picks the screen)
 - Small UI pieces (product cost field, order meta box) are plain PHP, not React
-- Data: custom table `{$wpdb->prefix}munafa_order_profit`, REST namespace `munafa/v1`
+- Data: custom tables `{$wpdb->prefix}munafa_order_profit` and `munafa_order_items`,
+  REST namespace `munafa/v1`; every setting lives in `Settings\Settings`
+- Node.js lives in Herd's nvm (`C:\Users\rlora\.config\herd\bin\nvm\v24.22.1`); put it on PATH
+  before `npm` commands if `node` is not found
 - Background jobs: Action Scheduler (bundled with WooCommerce)
 
 ## Naming
@@ -56,7 +60,12 @@ readme.txt            WordPress.org readme
 - All user-facing strings translatable with the `munafa` text domain
 - Money: `Profit\Calculator` rounds every amount to 2 decimals before adding it up; the table
   stores `DECIMAL(19,4)`; product costs are saved with `wc_format_decimal()`
-- Keep `Profit\Calculator` free of WordPress/WooCommerce calls so it stays unit-testable
+- Keep `Profit\Calculator` and `Profit\ZoneMatcher` free of WordPress/WooCommerce calls so they stay unit-testable
+- Nothing country-specific in code: courier zones, payment method fees, return reasons and
+  report statuses are seller settings. Sellers are anywhere in South Asia (BD, IN, PK, NP…),
+  so no hardcoded state codes, city names, gateways or currency
+- A schema change bumps `Installer::DB_VERSION`; a settings shape change bumps `Settings::VERSION`
+  and adds a step to `Settings::maybe_migrate()`
 - Heavy work (recalculating many orders) goes through Action Scheduler in batches
 - No external CSS frameworks (Tailwind/Bootstrap) in wp-admin
 - Pro-only code stays behind Freemius checks and out of the WordPress.org build
