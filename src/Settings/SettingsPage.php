@@ -15,7 +15,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Settings tab for courier charges and fees.
  *
- * Only instantiated from the `woocommerce_get_settings_pages` filter, when WC_Settings_Page is loaded.
+ * Only instantiated from the `woocommerce_get_settings_pages` filter (see Plugin::add_settings_page()),
+ * when WC_Settings_Page is loaded. Never reference this class earlier.
  */
 final class SettingsPage extends WC_Settings_Page {
 
@@ -29,19 +30,6 @@ final class SettingsPage extends WC_Settings_Page {
 		parent::__construct();
 
 		add_action( 'woocommerce_admin_field_munafa_recalculate', array( $this, 'render_recalculate_field' ) );
-	}
-
-	/**
-	 * Register the tab with WooCommerce.
-	 */
-	public static function register(): void {
-		add_filter(
-			'woocommerce_get_settings_pages',
-			static function ( $pages ) {
-				$pages[] = new self();
-				return $pages;
-			}
-		);
 	}
 
 	/**

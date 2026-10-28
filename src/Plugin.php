@@ -43,7 +43,19 @@ final class Plugin {
 		if ( is_admin() ) {
 			Orders\MetaBox::register();
 			Products\CostField::register();
-			Settings\SettingsPage::register();
+			// SettingsPage extends WC_Settings_Page, which only exists inside this filter, so don't touch the class before it.
+			add_filter( 'woocommerce_get_settings_pages', array( self::class, 'add_settings_page' ) );
 		}
+	}
+
+	/**
+	 * Add the Munafa tab to WooCommerce → Settings.
+	 *
+	 * @param array $pages Settings pages.
+	 * @return array
+	 */
+	public static function add_settings_page( $pages ) {
+		$pages[] = new Settings\SettingsPage();
+		return $pages;
 	}
 }
