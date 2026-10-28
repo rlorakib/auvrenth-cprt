@@ -22,6 +22,8 @@ final class Options {
 		'courier_outside_dhaka' => '120',
 		'cod_fee_percent'       => '1',
 		'gateway_fee_percent'   => '2',
+		'return_charge_percent' => '50',
+		'packaging_cost'        => '0',
 	);
 
 	/**

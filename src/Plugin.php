@@ -37,6 +37,7 @@ final class Plugin {
 
 		Db\Installer::maybe_upgrade();
 
+		Orders\ReturnStatus::register();
 		Orders\Sync::register();
 		Tools\Recalculator::register();
 

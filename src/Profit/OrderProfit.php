@@ -8,6 +8,7 @@
 namespace Munafa\Profit;
 
 use Munafa\Db\Installer;
+use Munafa\Orders\ReturnStatus;
 use Munafa\Settings\Options;
 use WC_Order;
 use WC_Order_Refund;
@@ -18,6 +19,16 @@ defined( 'ABSPATH' ) || exit;
  * Calculates an order's profit and stores it in the Munafa table.
  */
 final class OrderProfit {
+
+	/**
+	 * Order meta key for a courier charge entered on the order, replacing the default.
+	 */
+	const COURIER_META = '_munafa_courier_cost';
+
+	/**
+	 * Order meta key for why a parcel was returned (a key of ReturnStatus::reasons()).
+	 */
+	const REASON_META = '_munafa_return_reason';
 
 	/**
 	 * Recalculate and save the profit of one order.
@@ -51,11 +62,13 @@ final class OrderProfit {
 				'cod_fee'        => $breakdown['cod_fee'],
 				'gateway_fee'    => $breakdown['gateway_fee'],
 				'return_cost'    => $breakdown['return_cost'],
+				'packaging_cost' => $breakdown['packaging_cost'],
 				'net_profit'     => $breakdown['net_profit'],
+				'return_reason'  => ReturnStatus::STATUS === $order->get_status() ? (string) $order->get_meta( self::REASON_META ) : '',
 				'missing_cost'   => $breakdown['missing_cost'] ? 1 : 0,
 				'calculated_at'  => current_time( 'mysql', true ),
 			),
-			array( '%d', '%s', '%s', '%s', '%s', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%d', '%s' )
+			array( '%d', '%s', '%s', '%s', '%s', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%s', '%d', '%s' )
 		);
 	}
 
@@ -101,17 +114,36 @@ final class OrderProfit {
 			}
 		}
 
-		$country = $order->get_shipping_country() ? $order->get_shipping_country() : $order->get_billing_country();
-
 		return array(
-			'total'        => (float) $order->get_total(),
-			'tax'          => (float) $order->get_total_tax(),
-			'refunded'     => (float) $order->get_total_refunded(),
-			'item_costs'   => $item_costs,
-			'is_cod'       => 'cod' === $order->get_payment_method(),
-			'inside_dhaka' => 'BD' === $country && Options::DHAKA_STATE === self::delivery_state( $order ),
-			'return_cost'  => 0,
+			'total'            => (float) $order->get_total(),
+			'tax'              => (float) $order->get_total_tax(),
+			'refunded'         => (float) $order->get_total_refunded(),
+			'item_costs'       => $item_costs,
+			'is_cod'           => 'cod' === $order->get_payment_method(),
+			'inside_dhaka'     => self::inside_dhaka( $order ),
+			'is_returned'      => ReturnStatus::STATUS === $order->get_status(),
+			'courier_override' => self::courier_override( $order ),
 		);
+	}
+
+	/**
+	 * Whether the parcel is delivered inside Dhaka.
+	 *
+	 * @param WC_Order $order Order.
+	 */
+	public static function inside_dhaka( WC_Order $order ): bool {
+		$country = $order->get_shipping_country() ? $order->get_shipping_country() : $order->get_billing_country();
+		return 'BD' === $country && Options::DHAKA_STATE === self::delivery_state( $order );
+	}
+
+	/**
+	 * Courier charge entered on the order, or null to use the default.
+	 *
+	 * @param WC_Order $order Order.
+	 */
+	public static function courier_override( WC_Order $order ): ?float {
+		$value = $order->get_meta( self::COURIER_META );
+		return '' === $value ? null : (float) $value;
 	}
 
 	/**

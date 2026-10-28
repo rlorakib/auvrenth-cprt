@@ -47,6 +47,20 @@ final class Calculator {
 	private $gateway_fee_percent;
 
 	/**
+	 * Return charge as a percentage of the order's courier charge.
+	 *
+	 * @var float
+	 */
+	private $return_charge_percent;
+
+	/**
+	 * Packaging cost of every order.
+	 *
+	 * @var float
+	 */
+	private $packaging_cost;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param array $settings {
@@ -56,6 +70,8 @@ final class Calculator {
 	 *     @type float $courier_outside_dhaka Courier charge outside Dhaka.
 	 *     @type float $cod_fee_percent       COD charge in percent.
 	 *     @type float $gateway_fee_percent   Gateway fee in percent.
+	 *     @type float $return_charge_percent Return charge in percent of the courier charge.
+	 *     @type float $packaging_cost        Packaging cost per order.
 	 * }
 	 */
 	public function __construct( array $settings ) {
@@ -63,28 +79,36 @@ final class Calculator {
 		$this->courier_outside_dhaka = (float) ( $settings['courier_outside_dhaka'] ?? 0 );
 		$this->cod_fee_percent       = (float) ( $settings['cod_fee_percent'] ?? 0 );
 		$this->gateway_fee_percent   = (float) ( $settings['gateway_fee_percent'] ?? 0 );
+		$this->return_charge_percent = (float) ( $settings['return_charge_percent'] ?? 0 );
+		$this->packaging_cost        = (float) ( $settings['packaging_cost'] ?? 0 );
 	}
 
 	/**
 	 * Calculate the profit breakdown for one order.
 	 *
+	 * A returned order earns nothing and its products go back to stock, so it only
+	 * loses the courier charge both ways, packaging, and any online payment fee.
+	 *
 	 * @param array $order {
 	 *     Order numbers.
 	 *
-	 *     @type float              $total        Order total paid by the customer, including shipping and tax.
-	 *     @type float              $tax          Total tax in the order.
-	 *     @type float              $refunded     Amount refunded so far.
-	 *     @type array<float|null>  $item_costs   Cost of each line item (unit cost × net quantity). Null when unknown.
-	 *     @type bool               $is_cod       Whether the order is paid cash on delivery.
-	 *     @type bool               $inside_dhaka Whether the delivery address is inside Dhaka.
-	 *     @type float              $return_cost  Extra loss from a returned parcel.
+	 *     @type float              $total            Order total paid by the customer, including shipping and tax.
+	 *     @type float              $tax              Total tax in the order.
+	 *     @type float              $refunded         Amount refunded so far.
+	 *     @type array<float|null>  $item_costs       Cost of each line item (unit cost × net quantity). Null when unknown.
+	 *     @type bool               $is_cod           Whether the order is paid cash on delivery.
+	 *     @type bool               $inside_dhaka     Whether the delivery address is inside Dhaka.
+	 *     @type bool               $is_returned      Whether the parcel came back undelivered.
+	 *     @type float|null         $courier_override Courier charge for this order, instead of the default.
 	 * }
-	 * @return array{revenue: float, product_cost: float, courier_cost: float, cod_fee: float, gateway_fee: float, return_cost: float, net_profit: float, missing_cost: bool}
+	 * @return array{revenue: float, product_cost: float, courier_cost: float, cod_fee: float, gateway_fee: float, return_cost: float, packaging_cost: float, net_profit: float, missing_cost: bool}
 	 */
 	public function calculate( array $order ): array {
-		$total    = (float) ( $order['total'] ?? 0 );
-		$tax      = (float) ( $order['tax'] ?? 0 );
-		$refunded = (float) ( $order['refunded'] ?? 0 );
+		$total       = (float) ( $order['total'] ?? 0 );
+		$tax         = (float) ( $order['tax'] ?? 0 );
+		$refunded    = (float) ( $order['refunded'] ?? 0 );
+		$is_cod      = ! empty( $order['is_cod'] );
+		$is_returned = ! empty( $order['is_returned'] );
 
 		$product_cost = 0.0;
 		$missing_cost = false;
@@ -96,17 +120,23 @@ final class Calculator {
 			$product_cost += (float) $cost;
 		}
 
-		$is_cod      = ! empty( $order['is_cod'] );
+		if ( isset( $order['courier_override'] ) ) {
+			$courier_cost = self::round( (float) $order['courier_override'] );
+		} else {
+			$courier_cost = self::round( ! empty( $order['inside_dhaka'] ) ? $this->courier_inside_dhaka : $this->courier_outside_dhaka );
+		}
+
 		$fee_percent = $is_cod ? $this->cod_fee_percent : $this->gateway_fee_percent;
 		$fee         = $total > 0 ? self::round( $total * $fee_percent / 100 ) : 0.0;
 
 		$breakdown = array(
-			'revenue'      => self::round( $total - $tax - $refunded ),
-			'product_cost' => self::round( $product_cost ),
-			'courier_cost' => self::round( ! empty( $order['inside_dhaka'] ) ? $this->courier_inside_dhaka : $this->courier_outside_dhaka ),
-			'cod_fee'      => $is_cod ? $fee : 0.0,
-			'gateway_fee'  => $is_cod ? 0.0 : $fee,
-			'return_cost'  => self::round( (float) ( $order['return_cost'] ?? 0 ) ),
+			'revenue'        => $is_returned ? 0.0 : self::round( $total - $tax - $refunded ),
+			'product_cost'   => $is_returned ? 0.0 : self::round( $product_cost ),
+			'courier_cost'   => $courier_cost,
+			'cod_fee'        => $is_cod && ! $is_returned ? $fee : 0.0,
+			'gateway_fee'    => $is_cod ? 0.0 : $fee,
+			'return_cost'    => $is_returned ? self::round( $courier_cost * $this->return_charge_percent / 100 ) : 0.0,
+			'packaging_cost' => self::round( $this->packaging_cost ),
 		);
 
 		$breakdown['net_profit'] = self::round(
@@ -116,9 +146,11 @@ final class Calculator {
 			- $breakdown['cod_fee']
 			- $breakdown['gateway_fee']
 			- $breakdown['return_cost']
+			- $breakdown['packaging_cost']
 		);
 
-		$breakdown['missing_cost'] = $missing_cost;
+		// Unknown costs don't matter when nothing was sold.
+		$breakdown['missing_cost'] = $missing_cost && ! $is_returned;
 
 		return $breakdown;
 	}

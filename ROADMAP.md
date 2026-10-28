@@ -54,11 +54,14 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 **Goal:** Return er ashol loss dhora porbe.
 
-- [ ] Custom order status `wc-returned` ("Returned")
-- [ ] Return hole loss = jawa + asha courier charge + packaging cost (setting)
-- [ ] Order theke district/area save (billing city/state)
-- [ ] Per-order courier charge manually edit korar option
-- [ ] Return reason dropdown (customer refused, wrong address, phone off, other)
+- [x] Custom order status `wc-returned` ("Returned")
+- [x] Return hole loss = jawa + asha courier charge (return charge % setting) + gateway fee; revenue ar product cost 0, stock ferot ashe
+- [x] Packaging cost setting, sob order e (delivered + returned)
+- [x] Order theke district/area save (shipping state, na thakle billing state)
+- [x] Per-order courier charge manually edit korar option (order page er Munafa box e)
+- [x] Return reason dropdown (customer refused, wrong address, phone off, not available, other)
+- [x] "Change status to returned" bulk action
+- [ ] Browser e nije check: Returned status, bulk action, Munafa box er notun field
 
 **Done when:** Returned order e profit negative dekhay, reason save hoy.
 

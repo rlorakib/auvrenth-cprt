@@ -94,6 +94,29 @@ final class SettingsPage extends WC_Settings_Page {
 				),
 			),
 			array(
+				'id'                => Options::option_name( 'return_charge_percent' ),
+				'title'             => __( 'Return charge (% of courier charge)', 'munafa' ),
+				'desc_tip'          => __( 'What the courier charges to bring a returned parcel back. Many couriers charge half the delivery charge (50%).', 'munafa' ),
+				'type'              => 'number',
+				'default'           => Options::DEFAULTS['return_charge_percent'],
+				'custom_attributes' => array(
+					'min'  => '0',
+					'step' => '0.01',
+				),
+			),
+			array(
+				'id'                => Options::option_name( 'packaging_cost' ),
+				/* translators: %s: currency symbol */
+				'title'             => sprintf( __( 'Packaging cost per order (%s)', 'munafa' ), $currency ),
+				'desc_tip'          => __( 'Box, poly bag, tape and printing for one parcel. Counted on delivered and returned orders.', 'munafa' ),
+				'type'              => 'number',
+				'default'           => Options::DEFAULTS['packaging_cost'],
+				'custom_attributes' => array(
+					'min'  => '0',
+					'step' => '0.01',
+				),
+			),
+			array(
 				'id'   => 'munafa_recalculate',
 				'type' => 'munafa_recalculate',
 			),

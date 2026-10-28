@@ -17,7 +17,7 @@ final class Installer {
 	/**
 	 * Bump this when the table schema changes.
 	 */
-	const DB_VERSION = '1';
+	const DB_VERSION = '2';
 
 	/**
 	 * Option that stores the installed schema version.
@@ -62,7 +62,9 @@ final class Installer {
 				cod_fee decimal(19,4) NOT NULL DEFAULT 0,
 				gateway_fee decimal(19,4) NOT NULL DEFAULT 0,
 				return_cost decimal(19,4) NOT NULL DEFAULT 0,
+				packaging_cost decimal(19,4) NOT NULL DEFAULT 0,
 				net_profit decimal(19,4) NOT NULL DEFAULT 0,
+				return_reason varchar(32) NOT NULL DEFAULT '',
 				missing_cost tinyint(1) NOT NULL DEFAULT 0,
 				calculated_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				PRIMARY KEY  (order_id),

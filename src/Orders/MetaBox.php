@@ -8,13 +8,15 @@
 namespace Munafa\Orders;
 
 use Munafa\Profit\OrderProfit;
+use Munafa\Settings\Options;
 use WC_Order;
 use WP_Post;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Shows the order's profit breakdown in the sidebar of the order edit screen.
+ * Shows the order's profit breakdown in the sidebar of the order edit screen,
+ * with fields for this order's courier charge and return reason.
  */
 final class MetaBox {
 
@@ -23,6 +25,8 @@ final class MetaBox {
 	 */
 	public static function register(): void {
 		add_action( 'add_meta_boxes', array( self::class, 'add' ) );
+		// After WooCommerce's own order meta boxes have saved (they use priorities up to 50).
+		add_action( 'woocommerce_process_shop_order_meta', array( self::class, 'save' ), 60, 2 );
 	}
 
 	/**
@@ -50,6 +54,16 @@ final class MetaBox {
 			return;
 		}
 
+		self::render_breakdown( $order );
+		self::render_fields( $order );
+	}
+
+	/**
+	 * Render the stored profit breakdown.
+	 *
+	 * @param WC_Order $order Order.
+	 */
+	private static function render_breakdown( WC_Order $order ): void {
 		$row = OrderProfit::get( $order->get_id() );
 		if ( ! $row ) {
 			echo '<p>' . esc_html__( 'Profit is calculated after the order is saved.', 'munafa' ) . '</p>';
@@ -58,12 +72,13 @@ final class MetaBox {
 
 		$currency = array( 'currency' => $order->get_currency() );
 		$lines    = array(
-			'revenue'      => __( 'Revenue', 'munafa' ),
-			'product_cost' => __( 'Product cost', 'munafa' ),
-			'courier_cost' => __( 'Courier charge', 'munafa' ),
-			'cod_fee'      => __( 'COD charge', 'munafa' ),
-			'gateway_fee'  => __( 'Gateway fee', 'munafa' ),
-			'return_cost'  => __( 'Return loss', 'munafa' ),
+			'revenue'        => __( 'Revenue', 'munafa' ),
+			'product_cost'   => __( 'Product cost', 'munafa' ),
+			'courier_cost'   => __( 'Courier charge', 'munafa' ),
+			'cod_fee'        => __( 'COD charge', 'munafa' ),
+			'gateway_fee'    => __( 'Gateway fee', 'munafa' ),
+			'return_cost'    => __( 'Return charge', 'munafa' ),
+			'packaging_cost' => __( 'Packaging', 'munafa' ),
 		);
 
 		echo '<table class="widefat striped" style="border:0"><tbody>';
@@ -94,5 +109,73 @@ final class MetaBox {
 			echo esc_html__( 'Some products in this order have no cost price, so profit is shown higher than it really is.', 'munafa' );
 			echo '</p>';
 		}
+	}
+
+	/**
+	 * Render the courier charge and return reason fields.
+	 *
+	 * @param WC_Order $order Order.
+	 */
+	private static function render_fields( WC_Order $order ): void {
+		$settings = Options::all();
+		$default  = OrderProfit::inside_dhaka( $order ) ? $settings['courier_inside_dhaka'] : $settings['courier_outside_dhaka'];
+		$override = OrderProfit::courier_override( $order );
+		$reason   = (string) $order->get_meta( OrderProfit::REASON_META );
+		?>
+		<p>
+			<label for="munafa_courier_cost">
+				<?php
+				/* translators: %s: currency symbol */
+				echo esc_html( sprintf( __( 'Courier charge for this order (%s)', 'munafa' ), Options::currency_symbol() ) );
+				?>
+			</label>
+			<input type="number" min="0" step="0.01" class="widefat" id="munafa_courier_cost" name="munafa_courier_cost"
+				value="<?php echo esc_attr( null === $override ? '' : wc_format_decimal( $override ) ); ?>"
+				placeholder="<?php echo esc_attr( sprintf( /* translators: %s: default courier charge */ __( 'Default: %s', 'munafa' ), wc_format_decimal( $default ) ) ); ?>">
+		</p>
+		<p>
+			<label for="munafa_return_reason"><?php esc_html_e( 'Return reason (for returned orders)', 'munafa' ); ?></label>
+			<select class="widefat" id="munafa_return_reason" name="munafa_return_reason">
+				<option value=""><?php esc_html_e( '— None —', 'munafa' ); ?></option>
+				<?php foreach ( ReturnStatus::reasons() as $key => $label ) : ?>
+					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $reason, $key ); ?>><?php echo esc_html( $label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Save the fields. WooCommerce has already checked the nonce and capability.
+	 *
+	 * @param int                   $order_id Order ID.
+	 * @param WC_Order|WP_Post|null $order    Order being edited (HPOS) or its post (legacy storage).
+	 */
+	public static function save( $order_id, $order = null ): void {
+		// Reuse WooCommerce's order object under HPOS so a later save of it can't overwrite our meta.
+		$order = $order instanceof WC_Order ? $order : wc_get_order( $order_id );
+		if ( ! $order instanceof WC_Order ) {
+			return;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified by WooCommerce before this hook.
+		$courier = isset( $_POST['munafa_courier_cost'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['munafa_courier_cost'] ) ) ) : '';
+		$reason  = isset( $_POST['munafa_return_reason'] ) ? sanitize_key( wp_unslash( $_POST['munafa_return_reason'] ) ) : '';
+		// phpcs:enable
+
+		if ( '' === $courier ) {
+			$order->delete_meta_data( OrderProfit::COURIER_META );
+		} else {
+			$order->update_meta_data( OrderProfit::COURIER_META, $courier );
+		}
+
+		if ( isset( ReturnStatus::reasons()[ $reason ] ) ) {
+			$order->update_meta_data( OrderProfit::REASON_META, $reason );
+		} else {
+			$order->delete_meta_data( OrderProfit::REASON_META );
+		}
+
+		// Saving queues the order in Orders\Sync, which recalculates its profit.
+		$order->save();
 	}
 }
