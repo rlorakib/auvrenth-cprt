@@ -11,21 +11,28 @@ export const SETTINGS_URL = settings.settingsUrl || '';
 
 const locale = settings.locale || undefined;
 
-const moneyFormat = new Intl.NumberFormat( locale, {
-	minimumFractionDigits: 0,
-	maximumFractionDigits: settings.decimals ?? 2,
+const decimals = settings.decimals ?? 2;
+
+// Whole amounts drop the decimals ("৳1,250"); others always show all of them ("৳1,441.30").
+const wholeFormat = new Intl.NumberFormat( locale, {
+	maximumFractionDigits: 0,
+} );
+const decimalFormat = new Intl.NumberFormat( locale, {
+	minimumFractionDigits: decimals,
+	maximumFractionDigits: decimals,
 } );
 
 /**
- * Format an amount with the store currency, e.g. "৳1,250" or "−৳90".
+ * Format an amount with the store currency, e.g. "৳1,250", "৳1,441.30" or "−৳90".
  *
  * @param {number} amount Amount.
  * @return {string} Formatted amount.
  */
 export function formatMoney( amount ) {
-	const value = Number( amount ) || 0;
-	const sign = value < 0 ? '−' : '';
-	return `${ sign }${ CURRENCY }${ moneyFormat.format( Math.abs( value ) ) }`;
+	const value = Math.abs( Number( amount ) || 0 );
+	const sign = Number( amount ) < 0 ? '−' : '';
+	const format = Number.isInteger( value ) ? wholeFormat : decimalFormat;
+	return `${ sign }${ CURRENCY }${ format.format( value ) }`;
 }
 
 /**
