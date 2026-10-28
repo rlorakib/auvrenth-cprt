@@ -38,5 +38,7 @@ if ( ! file_exists( MUNAFA_PATH . 'vendor/autoload.php' ) ) {
 
 require_once MUNAFA_PATH . 'vendor/autoload.php';
 
+register_activation_hook( __FILE__, array( Munafa\Db\Installer::class, 'install' ) );
+
 add_action( 'before_woocommerce_init', array( Munafa\Compatibility::class, 'declare' ) );
 add_action( 'plugins_loaded', array( Munafa\Plugin::class, 'boot' ) );

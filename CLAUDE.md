@@ -54,7 +54,9 @@ readme.txt            WordPress.org readme
 - Escape all output (`esc_html`, `esc_attr`, `wp_kses_post`), sanitize all input,
   verify nonces, check `current_user_can( 'manage_woocommerce' )` on admin actions and REST routes
 - All user-facing strings translatable with the `munafa` text domain
-- Money: store as decimal strings with `wc_format_decimal()`, never float math for totals
+- Money: `Profit\Calculator` rounds every amount to 2 decimals before adding it up; the table
+  stores `DECIMAL(19,4)`; product costs are saved with `wc_format_decimal()`
+- Keep `Profit\Calculator` free of WordPress/WooCommerce calls so it stays unit-testable
 - Heavy work (recalculating many orders) goes through Action Scheduler in batches
 - No external CSS frameworks (Tailwind/Bootstrap) in wp-admin
 - Pro-only code stays behind Freemius checks and out of the WordPress.org build

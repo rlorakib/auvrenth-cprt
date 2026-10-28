@@ -33,13 +33,15 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 **Goal:** Protiti order er profit hishab hobe ar save hobe.
 
-- [ ] HPOS + Cart/Checkout Blocks compatibility declare
-- [ ] Activation e custom table `{prefix}munafa_order_profit` create (dbDelta)
-- [ ] Product cost: WooCommerce native COGS field use, na thakle nijer `_munafa_cost` meta field (simple + variable product)
-- [ ] Settings: default courier charge (inside Dhaka / outside Dhaka), COD charge %, gateway fee %
-- [ ] Order status change hook e profit calculate → table e save
-- [ ] Order edit page e chhoto "Munafa" meta box: revenue, cost, courier, profit
-- [ ] Purono order er jonno "Recalculate all" tool (Action Scheduler diye batch e)
+- [x] HPOS + Cart/Checkout Blocks compatibility declare
+- [x] Activation e custom table `{prefix}munafa_order_profit` create (dbDelta)
+- [x] Product cost: WooCommerce native COGS field use, na thakle nijer `_munafa_cost` meta field (simple + variable product)
+- [x] Settings: default courier charge (inside Dhaka / outside Dhaka), COD charge %, gateway fee % (WooCommerce → Settings → Munafa)
+- [x] Order create/save/refund hook e profit calculate → table e save, trash/delete e row muche jay
+- [x] Order edit page e chhoto "Munafa" meta box: revenue, cost, courier, profit
+- [x] Purono order er jonno "Recalculate all" tool (Action Scheduler diye batch e), install er por nije-i chole
+- [x] Calculator unit test (PHPUnit, `composer test`)
+- [ ] Browser e nije check: order page er meta box, product page er cost field, Munafa settings tab
 
 **Claude ke bolben:**
 > Plan first (use plan mode). Implement Phase 1 from ROADMAP.md. Start with the DB table and the profit calculator class with unit tests, then hooks, then the meta box.

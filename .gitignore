@@ -1,6 +1,7 @@
 /vendor/
 /node_modules/
 /assets/build/
+.phpunit.result.cache
 *.zip
 *.log
 .DS_Store

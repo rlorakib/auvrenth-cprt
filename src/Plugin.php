@@ -35,6 +35,15 @@ final class Plugin {
 			return;
 		}
 
-		// Feature modules (profit engine, admin UI, REST API) are registered here from Phase 1 on.
+		Db\Installer::maybe_upgrade();
+
+		Orders\Sync::register();
+		Tools\Recalculator::register();
+
+		if ( is_admin() ) {
+			Orders\MetaBox::register();
+			Products\CostField::register();
+			Settings\SettingsPage::register();
+		}
 	}
 }
