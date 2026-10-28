@@ -17,7 +17,7 @@ final class Installer {
 	/**
 	 * Bump this when the table schema changes.
 	 */
-	const DB_VERSION = '2';
+	const DB_VERSION = '3';
 
 	/**
 	 * Option that stores the installed schema version.
@@ -38,6 +38,14 @@ final class Installer {
 	}
 
 	/**
+	 * Full name of the per-product line item table.
+	 */
+	public static function items_table(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'munafa_order_items';
+	}
+
+	/**
 	 * Run on activation, and on load when the schema version is outdated.
 	 */
 	public static function install(): void {
@@ -45,12 +53,14 @@ final class Installer {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		$table   = self::table();
-		$collate = $wpdb->get_charset_collate();
+		$table       = self::table();
+		$items_table = self::items_table();
+		$collate     = $wpdb->get_charset_collate();
 
 		// dbDelta needs two spaces after PRIMARY KEY and one field per line.
 		dbDelta(
-			"CREATE TABLE {$table} (
+			array(
+				"CREATE TABLE {$table} (
 				order_id bigint(20) unsigned NOT NULL,
 				order_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				order_status varchar(32) NOT NULL DEFAULT '',
@@ -70,13 +80,28 @@ final class Installer {
 				PRIMARY KEY  (order_id),
 				KEY order_date_gmt (order_date_gmt),
 				KEY order_status (order_status)
-			) {$collate};"
+			) {$collate};",
+				"CREATE TABLE {$items_table} (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				order_id bigint(20) unsigned NOT NULL,
+				product_id bigint(20) unsigned NOT NULL DEFAULT 0,
+				variation_id bigint(20) unsigned NOT NULL DEFAULT 0,
+				qty int(11) NOT NULL DEFAULT 0,
+				revenue decimal(19,4) NOT NULL DEFAULT 0,
+				cost decimal(19,4) NOT NULL DEFAULT 0,
+				missing_cost tinyint(1) NOT NULL DEFAULT 0,
+				PRIMARY KEY  (id),
+				KEY order_id (order_id),
+				KEY product_id (product_id)
+			) {$collate};",
+			)
 		);
 
-		$first_install = false === get_option( self::VERSION_OPTION );
+		$previous_version = get_option( self::VERSION_OPTION );
 		update_option( self::VERSION_OPTION, self::DB_VERSION );
 
-		if ( $first_install ) {
+		// New data needs filling in for existing orders, on first install and after every schema change.
+		if ( self::DB_VERSION !== $previous_version ) {
 			update_option( self::RECALC_OPTION, 'yes' );
 		}
 	}

@@ -11,6 +11,10 @@
     "make-pot": "wp i18n make-pot . languages/munafa.pot --exclude=node_modules,vendor,assets/src"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^30.0.0"
+    "@wordpress/scripts": "^30.0.0",
+    "typescript": "~5.8.0"
+  },
+  "dependencies": {
+    "recharts": "~2.15.0"
   }
 }

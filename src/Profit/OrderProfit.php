@@ -43,9 +43,11 @@ final class OrderProfit {
 			return;
 		}
 
-		$calculator = new Calculator( Options::all() );
-		$breakdown  = $calculator->calculate( self::input( $order ) );
-		$created    = $order->get_date_created();
+		$items       = self::items( $order );
+		$is_returned = ReturnStatus::STATUS === $order->get_status();
+		$calculator  = new Calculator( Options::all() );
+		$breakdown   = $calculator->calculate( self::input( $order, $items, $is_returned ) );
+		$created     = $order->get_date_created();
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, no WP API for it.
 		$wpdb->replace(
@@ -64,12 +66,73 @@ final class OrderProfit {
 				'return_cost'    => $breakdown['return_cost'],
 				'packaging_cost' => $breakdown['packaging_cost'],
 				'net_profit'     => $breakdown['net_profit'],
-				'return_reason'  => ReturnStatus::STATUS === $order->get_status() ? (string) $order->get_meta( self::REASON_META ) : '',
+				'return_reason'  => $is_returned ? (string) $order->get_meta( self::REASON_META ) : '',
 				'missing_cost'   => $breakdown['missing_cost'] ? 1 : 0,
 				'calculated_at'  => current_time( 'mysql', true ),
 			),
 			array( '%d', '%s', '%s', '%s', '%s', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%s', '%d', '%s' )
 		);
+
+		self::save_items( $order->get_id(), $items, $is_returned );
+	}
+
+	/**
+	 * Replace the stored line items of an order.
+	 *
+	 * Returned orders keep their quantities (for return counts per product) but
+	 * earn nothing and cost nothing, since the products went back to stock.
+	 *
+	 * @param int   $order_id    Order ID.
+	 * @param array $items       Line items from items().
+	 * @param bool  $is_returned Whether the order was returned.
+	 */
+	private static function save_items( int $order_id, array $items, bool $is_returned ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
+		$wpdb->delete( Installer::items_table(), array( 'order_id' => $order_id ), array( '%d' ) );
+
+		foreach ( $items as $item ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
+			$wpdb->insert(
+				Installer::items_table(),
+				array(
+					'order_id'     => $order_id,
+					'product_id'   => $item['product_id'],
+					'variation_id' => $item['variation_id'],
+					'qty'          => $item['qty'],
+					'revenue'      => $is_returned ? 0 : round( $item['revenue'], 2 ),
+					'cost'         => $is_returned || null === $item['cost'] ? 0 : round( $item['cost'], 2 ),
+					'missing_cost' => ! $is_returned && null === $item['cost'] ? 1 : 0,
+				),
+				array( '%d', '%d', '%d', '%d', '%f', '%f', '%d' )
+			);
+		}
+	}
+
+	/**
+	 * Product line items of an order, net of refunds.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return array<int, array{product_id: int, variation_id: int, qty: int, revenue: float, cost: float|null}>
+	 */
+	private static function items( WC_Order $order ): array {
+		$items = array();
+		foreach ( $order->get_items() as $item ) {
+			if ( ! $item instanceof \WC_Order_Item_Product ) {
+				continue;
+			}
+
+			$items[] = array(
+				'product_id'   => $item->get_product_id(),
+				'variation_id' => $item->get_variation_id(),
+				// get_qty_refunded_for_item() and get_total_refunded_for_item() return the refunded part (qty is negative).
+				'qty'          => max( 0, $item->get_quantity() + $order->get_qty_refunded_for_item( $item->get_id() ) ),
+				'revenue'      => (float) $item->get_total() - (float) $order->get_total_refunded_for_item( $item->get_id() ),
+				'cost'         => CostResolver::item_cost( $item, $order ),
+			);
+		}
+		return $items;
 	}
 
 	/**
@@ -99,29 +162,26 @@ final class OrderProfit {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
 		$wpdb->delete( Installer::table(), array( 'order_id' => $order_id ), array( '%d' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
+		$wpdb->delete( Installer::items_table(), array( 'order_id' => $order_id ), array( '%d' ) );
 	}
 
 	/**
 	 * Build the calculator input from an order.
 	 *
-	 * @param WC_Order $order Order.
+	 * @param WC_Order $order       Order.
+	 * @param array    $items       Line items from items().
+	 * @param bool     $is_returned Whether the order was returned.
 	 */
-	private static function input( WC_Order $order ): array {
-		$item_costs = array();
-		foreach ( $order->get_items() as $item ) {
-			if ( $item instanceof \WC_Order_Item_Product ) {
-				$item_costs[] = CostResolver::item_cost( $item, $order );
-			}
-		}
-
+	private static function input( WC_Order $order, array $items, bool $is_returned ): array {
 		return array(
 			'total'            => (float) $order->get_total(),
 			'tax'              => (float) $order->get_total_tax(),
 			'refunded'         => (float) $order->get_total_refunded(),
-			'item_costs'       => $item_costs,
+			'item_costs'       => array_column( $items, 'cost' ),
 			'is_cod'           => 'cod' === $order->get_payment_method(),
 			'inside_dhaka'     => self::inside_dhaka( $order ),
-			'is_returned'      => ReturnStatus::STATUS === $order->get_status(),
+			'is_returned'      => $is_returned,
 			'courier_override' => self::courier_override( $order ),
 		);
 	}

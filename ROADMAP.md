@@ -71,13 +71,15 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 **Goal:** WooCommerce → Munafa menu te sundor dashboard.
 
-- [ ] REST API: `munafa/v1/summary`, `/trend`, `/products`, `/returns` (capability: `manage_woocommerce`)
-- [ ] KPI card: total revenue, net profit, margin %, return rate, return loss
-- [ ] Profit trend chart (daily/weekly), Recharts diye
-- [ ] Top profitable + loss making products table (DataViews)
-- [ ] Return by district + by reason
-- [ ] Date range filter (today, 7d, 30d, custom)
-- [ ] Settings page React e
+- [x] REST API: `munafa/v1/summary`, `/trend`, `/products`, `/returns` (capability: `manage_woocommerce`)
+- [x] KPI card: total revenue, net profit, margin %, return rate, return loss (ager period er tulona soho)
+- [x] Profit trend chart (daily/weekly), Recharts diye
+- [x] Top profitable + loss making products table (plain table, DataViews lage nai)
+- [x] Return by district + by reason
+- [x] Date range filter (today, 7d, 30d, 90d, this month, custom)
+- [x] Product-wise data er jonno `munafa_order_items` table (DB v3)
+- [ ] ~~Settings page React e~~ WooCommerce settings tab-i thakbe
+- [ ] Browser e nije check: dashboard desktop + mobile, 1 second e load
 
 **Done when:** 500 order er data 1 second er moddhe load hoy, mobile e-o thik dekhay.
 

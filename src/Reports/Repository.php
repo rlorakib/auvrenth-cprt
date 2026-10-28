@@ -1,0 +1,299 @@
+<?php
+/**
+ * Report queries.
+ *
+ * @package Munafa
+ */
+
+namespace Munafa\Reports;
+
+use Munafa\Db\Installer;
+use Munafa\Orders\ReturnStatus;
+
+defined( 'ABSPATH' ) || exit;
+
+// Table names come from Installer and status placeholders are built from a fixed list,
+// so the interpolated SQL below is safe; every value goes through $wpdb->prepare().
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+// The sniff can't count arguments passed as one merged array.
+// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+
+/**
+ * Reads profit reports from the Munafa tables.
+ */
+final class Repository {
+
+	/**
+	 * Order statuses counted in reports.
+	 *
+	 * @return string[]
+	 */
+	public static function statuses(): array {
+		/**
+		 * Filters which order statuses Munafa reports count (without the `wc-` prefix).
+		 *
+		 * @param string[] $statuses Order statuses.
+		 */
+		$statuses = apply_filters( 'munafa_report_statuses', array( 'completed', 'processing', 'on-hold', ReturnStatus::STATUS ) );
+		return array_values( array_filter( array_map( 'sanitize_key', (array) $statuses ) ) );
+	}
+
+	/**
+	 * Totals for a date range.
+	 *
+	 * @param DateRange $range Dates.
+	 * @return array<string, float|int>
+	 */
+	public static function summary( DateRange $range ): array {
+		global $wpdb;
+
+		list( $where, $args ) = self::where( $range, 'o' );
+		$table                = Installer::table();
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(*) AS orders,
+					COALESCE( SUM( o.revenue ), 0 ) AS revenue,
+					COALESCE( SUM( o.net_profit ), 0 ) AS net_profit,
+					COALESCE( SUM( o.order_status = %s ), 0 ) AS returned,
+					COALESCE( SUM( CASE WHEN o.order_status = %s THEN -o.net_profit ELSE 0 END ), 0 ) AS return_loss,
+					COALESCE( SUM( o.missing_cost ), 0 ) AS missing_cost
+				FROM {$table} o
+				WHERE {$where}",
+				array_merge( array( ReturnStatus::STATUS, ReturnStatus::STATUS ), $args )
+			),
+			ARRAY_A
+		);
+
+		$orders  = (int) $row['orders'];
+		$revenue = (float) $row['revenue'];
+		$profit  = (float) $row['net_profit'];
+
+		return array(
+			'orders'       => $orders,
+			'revenue'      => round( $revenue, 2 ),
+			'net_profit'   => round( $profit, 2 ),
+			'margin'       => $revenue > 0 ? round( $profit / $revenue * 100, 1 ) : 0.0,
+			'returned'     => (int) $row['returned'],
+			'return_rate'  => $orders > 0 ? round( (int) $row['returned'] / $orders * 100, 1 ) : 0.0,
+			'return_loss'  => round( (float) $row['return_loss'], 2 ),
+			'missing_cost' => (int) $row['missing_cost'],
+		);
+	}
+
+	/**
+	 * Revenue and profit per day or week, with empty periods filled with zeros.
+	 *
+	 * @param DateRange $range    Dates.
+	 * @param string    $interval `day` or `week`.
+	 * @return array<int, array<string, float|int|string>>
+	 */
+	public static function trend( DateRange $range, string $interval ): array {
+		global $wpdb;
+
+		list( $where, $args ) = self::where( $range, 'o' );
+		$table                = Installer::table();
+		$offset               = wp_timezone()->getOffset( new \DateTimeImmutable( 'now' ) );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT DATE( DATE_ADD( o.order_date_gmt, INTERVAL %d SECOND ) ) AS day,
+					COUNT(*) AS orders,
+					SUM( o.order_status = %s ) AS returned,
+					SUM( o.revenue ) AS revenue,
+					SUM( o.net_profit ) AS net_profit
+				FROM {$table} o
+				WHERE {$where}
+				GROUP BY day",
+				array_merge( array( $offset, ReturnStatus::STATUS ), $args )
+			),
+			OBJECT_K
+		);
+
+		$periods = array();
+		foreach ( $range->each_day() as $day ) {
+			$key = 'week' === $interval ? self::week_start( $day ) : $day;
+			if ( ! isset( $periods[ $key ] ) ) {
+				$periods[ $key ] = array(
+					'date'       => $key,
+					'orders'     => 0,
+					'returned'   => 0,
+					'revenue'    => 0.0,
+					'net_profit' => 0.0,
+				);
+			}
+			if ( isset( $rows[ $day ] ) ) {
+				$periods[ $key ]['orders']     += (int) $rows[ $day ]->orders;
+				$periods[ $key ]['returned']   += (int) $rows[ $day ]->returned;
+				$periods[ $key ]['revenue']    += (float) $rows[ $day ]->revenue;
+				$periods[ $key ]['net_profit'] += (float) $rows[ $day ]->net_profit;
+			}
+		}
+
+		foreach ( $periods as &$period ) {
+			$period['revenue']    = round( $period['revenue'], 2 );
+			$period['net_profit'] = round( $period['net_profit'], 2 );
+		}
+		unset( $period );
+
+		return array_values( $periods );
+	}
+
+	/**
+	 * Gross profit per product (before courier charges and fees).
+	 *
+	 * @param DateRange $range   Dates.
+	 * @param string    $orderby `profit` for the most profitable, `loss` for loss makers only.
+	 * @param int       $limit   Number of products.
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function products( DateRange $range, string $orderby, int $limit ): array {
+		global $wpdb;
+
+		list( $where, $args ) = self::where( $range, 'o' );
+		$table                = Installer::table();
+		$items_table          = Installer::items_table();
+		$having               = 'loss' === $orderby ? 'HAVING profit < 0' : '';
+		$order                = 'loss' === $orderby ? 'ASC' : 'DESC';
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT i.product_id,
+					SUM( CASE WHEN o.order_status = %s THEN 0 ELSE i.qty END ) AS qty,
+					COUNT( DISTINCT CASE WHEN o.order_status = %s THEN i.order_id END ) AS returned,
+					SUM( i.revenue ) AS revenue,
+					SUM( i.cost ) AS cost,
+					SUM( i.revenue ) - SUM( i.cost ) AS profit,
+					MAX( i.missing_cost ) AS missing_cost
+				FROM {$items_table} i
+				INNER JOIN {$table} o ON o.order_id = i.order_id
+				WHERE {$where}
+				GROUP BY i.product_id
+				{$having}
+				ORDER BY profit {$order}
+				LIMIT %d",
+				array_merge( array( ReturnStatus::STATUS, ReturnStatus::STATUS ), $args, array( $limit ) )
+			),
+			ARRAY_A
+		);
+
+		return array_map(
+			static function ( $row ) {
+				$product = wc_get_product( (int) $row['product_id'] );
+				return array(
+					'id'           => (int) $row['product_id'],
+					'name'         => $product ? $product->get_name() : __( 'Deleted product', 'munafa' ),
+					'edit_url'     => $product ? get_edit_post_link( $product->get_id(), 'raw' ) : '',
+					'qty'          => (int) $row['qty'],
+					'returned'     => (int) $row['returned'],
+					'revenue'      => round( (float) $row['revenue'], 2 ),
+					'cost'         => round( (float) $row['cost'], 2 ),
+					'profit'       => round( (float) $row['profit'], 2 ),
+					'missing_cost' => (bool) $row['missing_cost'],
+				);
+			},
+			$rows
+		);
+	}
+
+	/**
+	 * Returns per district and per reason.
+	 *
+	 * @param DateRange $range Dates.
+	 * @return array{districts: array, reasons: array}
+	 */
+	public static function returns( DateRange $range ): array {
+		global $wpdb;
+
+		list( $where, $args ) = self::where( $range, 'o' );
+		$table                = Installer::table();
+
+		$districts = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT o.delivery_state AS state,
+					COUNT(*) AS orders,
+					SUM( o.order_status = %s ) AS returned,
+					SUM( CASE WHEN o.order_status = %s THEN -o.net_profit ELSE 0 END ) AS loss
+				FROM {$table} o
+				WHERE {$where}
+				GROUP BY o.delivery_state
+				ORDER BY returned DESC, orders DESC",
+				array_merge( array( ReturnStatus::STATUS, ReturnStatus::STATUS ), $args )
+			),
+			ARRAY_A
+		);
+
+		$reasons = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT o.return_reason AS reason, COUNT(*) AS returned, SUM( -o.net_profit ) AS loss
+				FROM {$table} o
+				WHERE {$where} AND o.order_status = %s
+				GROUP BY o.return_reason
+				ORDER BY returned DESC",
+				array_merge( $args, array( ReturnStatus::STATUS ) )
+			),
+			ARRAY_A
+		);
+
+		$state_names  = WC()->countries->get_states( 'BD' );
+		$reason_names = ReturnStatus::reasons();
+
+		return array(
+			'districts' => array_map(
+				static function ( $row ) use ( $state_names ) {
+					$orders = (int) $row['orders'];
+					return array(
+						'state'       => $row['state'],
+						'name'        => '' === $row['state'] ? __( 'Unknown', 'munafa' ) : ( $state_names[ $row['state'] ] ?? $row['state'] ),
+						'orders'      => $orders,
+						'returned'    => (int) $row['returned'],
+						'return_rate' => $orders > 0 ? round( (int) $row['returned'] / $orders * 100, 1 ) : 0.0,
+						'loss'        => round( (float) $row['loss'], 2 ),
+					);
+				},
+				$districts
+			),
+			'reasons'   => array_map(
+				static function ( $row ) use ( $reason_names ) {
+					return array(
+						'reason'   => $row['reason'],
+						'name'     => $reason_names[ $row['reason'] ] ?? __( 'Not set', 'munafa' ),
+						'returned' => (int) $row['returned'],
+						'loss'     => round( (float) $row['loss'], 2 ),
+					);
+				},
+				$reasons
+			),
+		);
+	}
+
+	/**
+	 * WHERE clause for the date range and report statuses, with its prepare() arguments.
+	 *
+	 * @param DateRange $range Dates.
+	 * @param string    $alias Order profit table alias.
+	 * @return array{0: string, 1: array}
+	 */
+	private static function where( DateRange $range, string $alias ): array {
+		$statuses     = self::statuses();
+		$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
+
+		return array(
+			"{$alias}.order_date_gmt >= %s AND {$alias}.order_date_gmt < %s AND {$alias}.order_status IN ( {$placeholders} )",
+			array_merge( array( $range->gmt_start(), $range->gmt_end() ), $statuses ),
+		);
+	}
+
+	/**
+	 * First day of the week a day belongs to, using the site's "Week starts on" setting.
+	 *
+	 * @param string $day `Y-m-d`.
+	 */
+	private static function week_start( string $day ): string {
+		$date       = new \DateTimeImmutable( $day );
+		$start_of   = (int) get_option( 'start_of_week', 1 );
+		$days_since = ( (int) $date->format( 'w' ) - $start_of + 7 ) % 7;
+		return $date->modify( "-{$days_since} days" )->format( 'Y-m-d' );
+	}
+}
