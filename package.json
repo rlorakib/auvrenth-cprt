@@ -1,0 +1,16 @@
+{
+  "name": "munafa",
+  "version": "0.1.0",
+  "private": true,
+  "description": "COD Profit & Return Tracker for WooCommerce",
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "build": "wp-scripts build assets/src/index.js --output-path=assets/build",
+    "start": "wp-scripts start assets/src/index.js --output-path=assets/build",
+    "lint:js": "wp-scripts lint-js assets/src",
+    "make-pot": "wp i18n make-pot . languages/munafa.pot --exclude=node_modules,vendor,assets/src"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0"
+  }
+}
