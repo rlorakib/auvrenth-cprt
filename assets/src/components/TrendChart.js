@@ -16,7 +16,7 @@ import {
 	YAxis,
 } from 'recharts';
 
-import { CURRENCY, formatMoney, shortDate } from '../utils';
+import { CURRENCY, formatMoney, shortDate, shortHour } from '../utils';
 
 const REVENUE_COLOR = '#72aee6';
 const PROFIT_COLOR = '#008a20';
@@ -39,14 +39,32 @@ function axisMoney( value ) {
 /**
  * @param {Object}   props
  * @param {Array}    props.data             Trend rows from `/trend`.
- * @param {string}   props.interval         `day` or `week`.
- * @param {Function} props.onIntervalChange Called with `day` or `week`.
+ * @param {string}   props.interval         `hour`, `day` or `week`.
+ * @param {boolean}  props.multiDay         Whether the range covers more than one day.
+ * @param {Function} props.onIntervalChange Called with `hour`, `day` or `week`.
  */
-export default function TrendChart( { data, interval, onIntervalChange } ) {
+export default function TrendChart( {
+	data,
+	interval,
+	multiDay,
+	onIntervalChange,
+} ) {
 	const intervals = [
+		{ value: 'hour', label: __( 'Hourly', 'munafa' ) },
 		{ value: 'day', label: __( 'Daily', 'munafa' ) },
 		{ value: 'week', label: __( 'Weekly', 'munafa' ) },
 	];
+
+	// Hourly rows are "Y-m-d H:00", the others "Y-m-d". Going by the row itself keeps
+	// labels right while the data for a newly picked interval is still loading.
+	const axisLabel = ( key ) =>
+		String( key ).includes( ' ' )
+			? shortHour( key, multiDay )
+			: shortDate( key );
+	const tooltipLabel = ( key ) =>
+		String( key ).includes( ' ' )
+			? shortHour( key, true )
+			: shortDate( key );
 
 	return (
 		<section className="munafa-card munafa-trend">
@@ -79,7 +97,7 @@ export default function TrendChart( { data, interval, onIntervalChange } ) {
 						<CartesianGrid stroke="#f0f0f1" vertical={ false } />
 						<XAxis
 							dataKey="date"
-							tickFormatter={ shortDate }
+							tickFormatter={ axisLabel }
 							tick={ { fontSize: 12 } }
 							minTickGap={ 16 }
 						/>
@@ -89,7 +107,7 @@ export default function TrendChart( { data, interval, onIntervalChange } ) {
 							width={ 64 }
 						/>
 						<Tooltip
-							labelFormatter={ shortDate }
+							labelFormatter={ tooltipLabel }
 							formatter={ ( value, name ) => [
 								formatMoney( value ),
 								name,

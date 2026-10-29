@@ -26,6 +26,11 @@ defined( 'ABSPATH' ) || exit;
 final class Repository {
 
 	/**
+	 * Longest range the trend is shown per hour for; longer ones fall back to days.
+	 */
+	const MAX_HOURLY_DAYS = 7;
+
+	/**
 	 * Order statuses counted in reports.
 	 *
 	 * @return string[]
@@ -84,22 +89,28 @@ final class Repository {
 	}
 
 	/**
-	 * Revenue and profit per day or week, with empty periods filled with zeros.
+	 * Revenue and profit per hour, day or week, with empty periods filled with zeros.
 	 *
 	 * @param DateRange $range    Dates.
-	 * @param string    $interval `day` or `week`.
+	 * @param string    $interval `hour`, `day` or `week`. `hour` falls back to `day` past MAX_HOURLY_DAYS.
 	 * @return array<int, array<string, float|int|string>>
 	 */
 	public static function trend( DateRange $range, string $interval ): array {
 		global $wpdb;
 
+		if ( 'hour' === $interval && $range->days() > self::MAX_HOURLY_DAYS ) {
+			$interval = 'day';
+		}
+
 		list( $where, $args ) = self::where( $range, 'o' );
 		$table                = Installer::table();
 		$offset               = wp_timezone()->getOffset( new \DateTimeImmutable( 'now' ) );
+		// Rows are grouped per hour ("Y-m-d H:00") or per day; weeks are added up from days below.
+		$format = 'hour' === $interval ? '%%Y-%%m-%%d %%H:00' : '%%Y-%%m-%%d';
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT DATE( DATE_ADD( o.order_date_gmt, INTERVAL %d SECOND ) ) AS day,
+				"SELECT DATE_FORMAT( DATE_ADD( o.order_date_gmt, INTERVAL %d SECOND ), '{$format}' ) AS day,
 					COUNT(*) AS orders,
 					SUM( o.order_status = %s ) AS returned,
 					SUM( o.revenue ) AS revenue,
@@ -112,9 +123,20 @@ final class Repository {
 			OBJECT_K
 		);
 
-		$periods = array();
+		$slots = array();
 		foreach ( $range->each_day() as $day ) {
-			$key = 'week' === $interval ? self::week_start( $day ) : $day;
+			if ( 'hour' === $interval ) {
+				for ( $hour = 0; $hour < 24; $hour++ ) {
+					$slots[] = sprintf( '%s %02d:00', $day, $hour );
+				}
+			} else {
+				$slots[] = $day;
+			}
+		}
+
+		$periods = array();
+		foreach ( $slots as $slot ) {
+			$key = 'week' === $interval ? self::week_start( $slot ) : $slot;
 			if ( ! isset( $periods[ $key ] ) ) {
 				$periods[ $key ] = array(
 					'date'       => $key,
@@ -124,11 +146,11 @@ final class Repository {
 					'net_profit' => 0.0,
 				);
 			}
-			if ( isset( $rows[ $day ] ) ) {
-				$periods[ $key ]['orders']     += (int) $rows[ $day ]->orders;
-				$periods[ $key ]['returned']   += (int) $rows[ $day ]->returned;
-				$periods[ $key ]['revenue']    += (float) $rows[ $day ]->revenue;
-				$periods[ $key ]['net_profit'] += (float) $rows[ $day ]->net_profit;
+			if ( isset( $rows[ $slot ] ) ) {
+				$periods[ $key ]['orders']     += (int) $rows[ $slot ]->orders;
+				$periods[ $key ]['returned']   += (int) $rows[ $slot ]->returned;
+				$periods[ $key ]['revenue']    += (float) $rows[ $slot ]->revenue;
+				$periods[ $key ]['net_profit'] += (float) $rows[ $slot ]->net_profit;
 			}
 		}
 

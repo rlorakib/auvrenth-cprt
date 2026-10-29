@@ -12,7 +12,14 @@ import KpiCards from './components/KpiCards';
 import ProductsTable from './components/ProductsTable';
 import ReturnsReport from './components/ReturnsReport';
 import TrendChart from './components/TrendChart';
-import { PRODUCTS_URL, SETTINGS_URL, SETUP_DONE, presetRange } from './utils';
+import {
+	MAX_HOURLY_DAYS,
+	PRODUCTS_URL,
+	SETTINGS_URL,
+	SETUP_DONE,
+	presetRange,
+	rangeDays,
+} from './utils';
 
 /**
  * GET a Munafa report.
@@ -37,6 +44,19 @@ export default function App() {
 	const [ error, setError ] = useState( '' );
 
 	const { after, before } = range;
+	const days = rangeDays( after, before );
+	const hourlyAllowed = days <= MAX_HOURLY_DAYS;
+	// Hourly stays picked but shows days while the range is too long for it.
+	const trendInterval =
+		'hour' === interval && ! hourlyAllowed ? 'day' : interval;
+
+	// Picking Hourly on a long range narrows it to the last 7 days, which always fits.
+	const changeInterval = ( value ) => {
+		if ( 'hour' === value && ! hourlyAllowed ) {
+			setRange( { preset: '7', ...presetRange( '7' ) } );
+		}
+		setTrendInterval( value );
+	};
 
 	useEffect( () => {
 		const dates = { after, before };
@@ -65,14 +85,14 @@ export default function App() {
 
 	useEffect( () => {
 		let cancelled = false;
-		fetchReport( '/trend', { after, before, interval } )
+		fetchReport( '/trend', { after, before, interval: trendInterval } )
 			.then( ( data ) => ! cancelled && setTrend( data ) )
 			.catch( ( err ) => ! cancelled && setError( err.message ) );
 
 		return () => {
 			cancelled = true;
 		};
-	}, [ after, before, interval ] );
+	}, [ after, before, trendInterval ] );
 
 	const missing = reports?.summary.current.missing_cost || 0;
 
@@ -142,8 +162,9 @@ export default function App() {
 					/>
 					<TrendChart
 						data={ trend }
-						interval={ interval }
-						onIntervalChange={ setTrendInterval }
+						interval={ trendInterval }
+						multiDay={ days > 1 }
+						onIntervalChange={ changeInterval }
 					/>
 					<div className="munafa-dashboard__columns">
 						<ProductsTable

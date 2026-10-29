@@ -7,6 +7,7 @@
 
 namespace Munafa\Admin;
 
+use Munafa\Reports\Repository;
 use Munafa\Settings\Settings;
 
 defined( 'ABSPATH' ) || exit;
@@ -132,14 +133,15 @@ final class DashboardPage {
 			'window.munafaSettings = ' . wp_json_encode(
 				array(
 					// WooCommerce stores symbols as HTML entities ("&#2547;"); React prints text as is.
-					'currency'    => html_entity_decode( Settings::currency_symbol(), ENT_QUOTES, 'UTF-8' ),
-					'decimals'    => wc_get_price_decimals(),
-					'productsUrl' => admin_url( 'edit.php?post_type=product' ),
-					'settingsUrl' => self::settings_url(),
-					'setupDone'   => Settings::is_setup_done(),
-					'startOfWeek' => (int) get_option( 'start_of_week', 1 ),
-					'today'       => wp_date( 'Y-m-d' ),
-					'locale'      => str_replace( '_', '-', get_user_locale() ),
+					'currency'      => html_entity_decode( Settings::currency_symbol(), ENT_QUOTES, 'UTF-8' ),
+					'decimals'      => wc_get_price_decimals(),
+					'productsUrl'   => admin_url( 'edit.php?post_type=product' ),
+					'settingsUrl'   => self::settings_url(),
+					'setupDone'     => Settings::is_setup_done(),
+					'startOfWeek'   => (int) get_option( 'start_of_week', 1 ),
+					'maxHourlyDays' => Repository::MAX_HOURLY_DAYS,
+					'today'         => wp_date( 'Y-m-d' ),
+					'locale'        => str_replace( '_', '-', get_user_locale() ),
 				)
 			) . ';',
 			'before'

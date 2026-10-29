@@ -46,7 +46,7 @@ final class ReportsController {
 				'args'     => array(
 					'interval' => array(
 						'type'    => 'string',
-						'enum'    => array( 'day', 'week' ),
+						'enum'    => array( 'hour', 'day', 'week' ),
 						'default' => 'day',
 					),
 				),
@@ -112,7 +112,7 @@ final class ReportsController {
 	}
 
 	/**
-	 * `GET /trend`: revenue and profit per day or week.
+	 * `GET /trend`: revenue and profit per hour (ranges up to a week), day or week.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 */

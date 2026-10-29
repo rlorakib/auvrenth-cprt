@@ -9,6 +9,7 @@ export const TODAY = settings.today || new Date().toISOString().slice( 0, 10 );
 export const PRODUCTS_URL = settings.productsUrl || '';
 export const SETTINGS_URL = settings.settingsUrl || '';
 export const SETUP_DONE = Boolean( settings.setupDone );
+export const MAX_HOURLY_DAYS = settings.maxHourlyDays || 7;
 
 const locale = settings.locale || undefined;
 
@@ -71,6 +72,36 @@ export function shortDate( ymd ) {
 		month: 'short',
 		timeZone: 'UTC',
 	} );
+}
+
+/**
+ * Number of days from one Y-m-d date to another, both included.
+ *
+ * @param {string} after  First day.
+ * @param {string} before Last day.
+ * @return {number} Days.
+ */
+export function rangeDays( after, before ) {
+	const ms =
+		new Date( `${ before }T00:00:00Z` ) -
+		new Date( `${ after }T00:00:00Z` );
+	return Math.round( ms / 86400000 ) + 1;
+}
+
+/**
+ * Short label for a "Y-m-d H:00" hour, e.g. "2 PM", or "28 Oct, 2 PM" with the date.
+ *
+ * @param {string}  slot     Hour from the hourly trend.
+ * @param {boolean} withDate Whether to show the day too.
+ * @return {string} Label.
+ */
+export function shortHour( slot, withDate ) {
+	const [ ymd, time ] = String( slot ).split( ' ' );
+	const hour = new Date( `${ ymd }T${ time }:00Z` ).toLocaleTimeString(
+		locale,
+		{ hour: 'numeric', timeZone: 'UTC' }
+	);
+	return withDate ? `${ shortDate( ymd ) }, ${ hour }` : hour;
 }
 
 /**
