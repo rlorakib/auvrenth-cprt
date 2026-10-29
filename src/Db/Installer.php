@@ -17,7 +17,7 @@ final class Installer {
 	/**
 	 * Bump this when the table schema changes.
 	 */
-	const DB_VERSION = '4';
+	const DB_VERSION = '1';
 
 	/**
 	 * Option that stores the installed schema version.

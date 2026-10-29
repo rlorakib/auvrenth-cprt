@@ -34,6 +34,11 @@ final class MetaBox {
 	 * Add the meta box. Works with both HPOS and legacy post storage.
 	 */
 	public static function add(): void {
+		// Same rule as the reports: only shop managers and admins see profit.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
 		add_meta_box(
 			'munafa-order-profit',
 			__( 'Munafa – Profit', 'munafa' ),
@@ -155,12 +160,18 @@ final class MetaBox {
 	}
 
 	/**
-	 * Save the fields. WooCommerce has already checked the nonce and capability.
+	 * Save the fields. WooCommerce has already checked the nonce and that the user can edit the order.
 	 *
 	 * @param int                   $order_id Order ID.
 	 * @param WC_Order|WP_Post|null $order    Order being edited (HPOS) or its post (legacy storage).
 	 */
 	public static function save( $order_id, $order = null ): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by WooCommerce before this hook.
+		if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['munafa_courier_cost'] ) ) {
+			// The box was not on the form, so there is nothing to save (and nothing to clear).
+			return;
+		}
+
 		// Reuse WooCommerce's order object under HPOS so a later save of it can't overwrite our meta.
 		$order = $order instanceof WC_Order ? $order : wc_get_order( $order_id );
 		if ( ! $order instanceof WC_Order ) {
@@ -168,15 +179,16 @@ final class MetaBox {
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified by WooCommerce before this hook.
-		$courier = isset( $_POST['munafa_courier_cost'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['munafa_courier_cost'] ) ) ) : '';
+		$courier = wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['munafa_courier_cost'] ) ) );
 		$reason  = isset( $_POST['munafa_return_reason'] ) ? sanitize_key( wp_unslash( $_POST['munafa_return_reason'] ) ) : '';
 		// phpcs:enable
 
 		if ( '' === $courier ) {
 			$order->delete_meta_data( OrderProfit::COURIER_META );
-		} else {
+		} elseif ( is_numeric( $courier ) && (float) $courier >= 0 ) {
 			$order->update_meta_data( OrderProfit::COURIER_META, $courier );
 		}
+		// Anything else (a negative charge) is a typo; the saved charge stays as it was.
 
 		if ( isset( Settings::return_reasons()[ $reason ] ) ) {
 			$order->update_meta_data( OrderProfit::REASON_META, $reason );

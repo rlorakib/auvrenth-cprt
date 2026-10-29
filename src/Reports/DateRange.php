@@ -24,6 +24,11 @@ final class DateRange {
 	const DEFAULT_DAYS = 30;
 
 	/**
+	 * Longest range accepted (about 10 years); longer ones are cut to end on the last day.
+	 */
+	const MAX_DAYS = 3660;
+
+	/**
 	 * First day, 00:00 in site time.
 	 *
 	 * @var DateTimeImmutable
@@ -63,6 +68,11 @@ final class DateRange {
 
 		if ( $first > $last ) {
 			list( $first, $last ) = array( $last, $first );
+		}
+
+		// The trend report walks every day, so a range like 0001-01-01 must not reach it.
+		if ( $first->diff( $last )->days >= self::MAX_DAYS ) {
+			$first = $last->sub( new DateInterval( 'P' . ( self::MAX_DAYS - 1 ) . 'D' ) );
 		}
 
 		return new self( $first, $last->add( new DateInterval( 'P1D' ) ) );

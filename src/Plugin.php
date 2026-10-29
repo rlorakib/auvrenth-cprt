@@ -36,7 +36,7 @@ final class Plugin {
 		}
 
 		Db\Installer::maybe_upgrade();
-		// Late on init, once WooCommerce can list its payment gateways.
+		// Late on init, so future migration steps can use WooCommerce's payment gateways.
 		add_action( 'init', array( Settings\Settings::class, 'maybe_migrate' ), 20 );
 
 		Orders\ReturnStatus::register();

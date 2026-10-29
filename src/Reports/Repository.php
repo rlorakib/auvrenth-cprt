@@ -309,11 +309,14 @@ final class Repository {
 	 * @return array{0: string, 1: array}
 	 */
 	private static function where( DateRange $range, string $alias ): array {
-		$statuses     = self::statuses();
-		$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
+		$statuses = self::statuses();
+		// A filter can empty the list; "IN ()" is invalid SQL, so match nothing instead.
+		$status_sql = $statuses
+			? "{$alias}.order_status IN ( " . implode( ', ', array_fill( 0, count( $statuses ), '%s' ) ) . ' )'
+			: '1 = 0';
 
 		return array(
-			"{$alias}.order_date_gmt >= %s AND {$alias}.order_date_gmt < %s AND {$alias}.order_status IN ( {$placeholders} )",
+			"{$alias}.order_date_gmt >= %s AND {$alias}.order_date_gmt < %s AND {$status_sql}",
 			array_merge( array( $range->gmt_start(), $range->gmt_end() ), $statuses ),
 		);
 	}

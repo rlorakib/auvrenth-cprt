@@ -23,7 +23,7 @@ final class Settings {
 	/**
 	 * Bump when settings need migrating.
 	 */
-	const VERSION = '2';
+	const VERSION = '1';
 
 	const VERSION_OPTION   = 'munafa_settings_version';
 	const ZONES_OPTION     = 'munafa_courier_zones';
@@ -38,6 +38,11 @@ final class Settings {
 	 * Highest return charge accepted, in percent of the delivery charge.
 	 */
 	const MAX_RETURN_PERCENT = 200;
+
+	/**
+	 * Longest return reason key, the width of the `return_reason` column.
+	 */
+	const REASON_KEY_LENGTH = 32;
 
 	/**
 	 * Courier zones in the order they are matched.
@@ -211,7 +216,7 @@ final class Settings {
 		$known_areas = self::known_areas();
 
 		$zones = array();
-		foreach ( (array) ( $input['zones'] ?? array() ) as $index => $zone ) {
+		foreach ( array_values( (array) ( $input['zones'] ?? array() ) ) as $index => $zone ) {
 			$zone = (array) $zone;
 			$name = sanitize_text_field( $zone['name'] ?? '' );
 			/* translators: %d: zone number */
@@ -224,7 +229,7 @@ final class Settings {
 
 			$areas = array();
 			foreach ( (array) ( $zone['areas'] ?? array() ) as $area ) {
-				$area = strtoupper( sanitize_text_field( (string) $area ) );
+				$area = is_scalar( $area ) ? strtoupper( sanitize_text_field( (string) $area ) ) : '';
 				if ( ! isset( $known_areas[ $area ] ) ) {
 					/* translators: 1: zone name, 2: area code */
 					return self::error( sprintf( __( 'Zone "%1$s" has an unknown area: %2$s.', 'munafa' ), $name, $area ) );
@@ -257,13 +262,18 @@ final class Settings {
 
 		$methods = array();
 		foreach ( (array) ( $input['payment_methods'] ?? array() ) as $id => $method ) {
+			$id = sanitize_key( $id );
+			if ( '' === $id ) {
+				continue;
+			}
+
 			$method = (array) $method;
 			$fee    = self::number( $method['fee_percent'] ?? 0 );
 			if ( null === $fee || $fee > 100 ) {
 				/* translators: %s: payment method ID */
 				return self::error( sprintf( __( 'The fee for "%s" must be between 0 and 100%%.', 'munafa' ), $id ) );
 			}
-			$methods[ sanitize_key( $id ) ] = array(
+			$methods[ $id ] = array(
 				'is_cod'      => ! empty( $method['is_cod'] ),
 				'fee_percent' => $fee,
 			);
@@ -277,15 +287,17 @@ final class Settings {
 				continue;
 			}
 
+			// Saved keys stay as they are, since orders already store them.
 			$key = sanitize_key( $reason['key'] ?? '' );
 			if ( '' === $key ) {
-				$key = sanitize_key( sanitize_title( $label ) );
+				$key = substr( sanitize_key( sanitize_title( $label ) ), 0, self::REASON_KEY_LENGTH );
 				$key = '' !== $key ? $key : 'reason';
 			}
 			// Keep keys unique so two reasons never share stored order data.
 			$base = $key;
 			for ( $i = 2; isset( $reasons[ $key ] ); $i++ ) {
-				$key = "{$base}-{$i}";
+				$suffix = "-{$i}";
+				$key    = substr( $base, 0, self::REASON_KEY_LENGTH - strlen( $suffix ) ) . $suffix;
 			}
 
 			$reasons[ $key ] = array(
@@ -321,71 +333,14 @@ final class Settings {
 	}
 
 	/**
-	 * Move settings from the old Dhaka/outside-Dhaka options (settings version 1).
-	 * Hooked late on `init`, when payment gateways can be loaded.
+	 * Bring saved settings up to the current VERSION. Hooked late on `init`.
+	 * There are no steps yet: add one here whenever VERSION is bumped.
 	 */
 	public static function maybe_migrate(): void {
 		if ( self::VERSION === get_option( self::VERSION_OPTION ) ) {
 			return;
 		}
 
-		$old_keys = array( 'courier_inside_dhaka', 'courier_outside_dhaka', 'cod_fee_percent', 'gateway_fee_percent', 'return_charge_percent', 'packaging_cost' );
-		$old      = array();
-		$saved    = false;
-		foreach ( $old_keys as $key ) {
-			$value       = get_option( 'munafa_' . $key, null );
-			$saved       = $saved || null !== $value;
-			$old[ $key ] = $value;
-		}
-
-		// Values the version 1 settings used when nothing was saved.
-		$inside  = (float) ( $old['courier_inside_dhaka'] ?? 60 );
-		$outside = (float) ( $old['courier_outside_dhaka'] ?? 120 );
-		$cod     = (float) ( $old['cod_fee_percent'] ?? 1 );
-		$online  = (float) ( $old['gateway_fee_percent'] ?? 2 );
-		$return  = (float) ( $old['return_charge_percent'] ?? 50 );
-
-		if ( false === get_option( self::ZONES_OPTION ) ) {
-			update_option(
-				self::ZONES_OPTION,
-				array(
-					array(
-						'id'              => 'inside-dhaka',
-						'name'            => 'Inside Dhaka',
-						'areas'           => array( 'BD:BD-13' ),
-						'delivery_charge' => $inside,
-						'return_percent'  => $return,
-					),
-				),
-				false
-			);
-			update_option(
-				self::DEFAULT_OPTION,
-				array(
-					'delivery_charge' => $outside,
-					'return_percent'  => $return,
-				),
-				false
-			);
-
-			$methods = array();
-			foreach ( WC()->payment_gateways()->payment_gateways() as $id => $gateway ) {
-				$methods[ $id ] = array(
-					'is_cod'      => 'cod' === $id,
-					'fee_percent' => 'cod' === $id ? $cod : $online,
-				);
-			}
-			update_option( self::PAYMENTS_OPTION, $methods, false );
-		}
-
-		// packaging_cost keeps its option name, so it carries over by itself.
-		foreach ( array_diff( $old_keys, array( 'packaging_cost' ) ) as $key ) {
-			delete_option( 'munafa_' . $key );
-		}
-
-		if ( $saved ) {
-			update_option( self::SETUP_OPTION, 'yes', false );
-		}
 		update_option( self::VERSION_OPTION, self::VERSION );
 	}
 

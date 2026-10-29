@@ -112,7 +112,7 @@ final class CostField {
 	}
 
 	/**
-	 * Store a cost value, or remove it when empty.
+	 * Store a cost value, or remove it when empty. Negative values are ignored.
 	 *
 	 * @param WC_Product $product Product or variation.
 	 * @param string     $value   Submitted value.
@@ -125,6 +125,9 @@ final class CostField {
 			return;
 		}
 
-		$product->update_meta_data( CostResolver::META_KEY, $value );
+		// A negative cost is a typo; the saved cost stays as it was.
+		if ( is_numeric( $value ) && (float) $value >= 0 ) {
+			$product->update_meta_data( CostResolver::META_KEY, $value );
+		}
 	}
 }
