@@ -7,6 +7,7 @@
 
 namespace Munafa\Settings;
 
+use Munafa\Modules\Registry;
 use Munafa\Orders\ReturnStatus;
 use WP_Error;
 
@@ -188,8 +189,25 @@ final class Settings {
 			'report_statuses' => self::report_statuses(),
 			'packaging_cost'  => self::packaging_cost(),
 			'delete_data'     => self::delete_data_on_uninstall(),
+			'modules'         => (object) self::modules(),
 			'setup_done'      => self::is_setup_done(),
 		);
+	}
+
+	/**
+	 * On/off state and settings of every module, keyed by module ID.
+	 *
+	 * @return array<string, array{enabled: bool, settings: object}>
+	 */
+	public static function modules(): array {
+		$modules = array();
+		foreach ( Registry::all() as $id => $module ) {
+			$modules[ $id ] = array(
+				'enabled'  => Registry::is_enabled( $module ),
+				'settings' => (object) $module->settings(),
+			);
+		}
+		return $modules;
 	}
 
 	/**
@@ -211,6 +229,10 @@ final class Settings {
 		update_option( self::STATUSES_OPTION, $clean['report_statuses'], false );
 		update_option( self::PACKAGING_OPTION, $clean['packaging_cost'], false );
 		update_option( self::DELETE_OPTION, $clean['delete_data'] ? 'yes' : 'no', false );
+		update_option( Registry::OPTION, wp_list_pluck( $clean['modules'], 'enabled' ), false );
+		foreach ( Registry::all() as $id => $module ) {
+			$module->save_settings( $clean['modules'][ $id ]['settings'] );
+		}
 		update_option( self::SETUP_OPTION, 'yes', false );
 
 		return self::all();
@@ -332,6 +354,26 @@ final class Settings {
 			return self::error( __( 'Packaging cost must be 0 or more.', 'munafa' ) );
 		}
 
+		$modules = array();
+		foreach ( Registry::all() as $id => $module ) {
+			$module_input = (array) ( ( (array) ( $input['modules'] ?? array() ) )[ $id ] ?? array() );
+			$enabled      = ! empty( $module_input['enabled'] );
+			$settings     = $module->sanitize( (array) ( $module_input['settings'] ?? array() ) );
+
+			if ( is_wp_error( $settings ) ) {
+				// A module that is off has no tab to fix its settings on, so it keeps the saved ones.
+				if ( $enabled ) {
+					return self::error( $settings->get_error_message() );
+				}
+				$settings = $module->settings();
+			}
+
+			$modules[ $id ] = array(
+				'enabled'  => $enabled,
+				'settings' => $settings,
+			);
+		}
+
 		return array(
 			'zones'           => $zones,
 			'default_zone'    => $default,
@@ -340,6 +382,7 @@ final class Settings {
 			'report_statuses' => $statuses,
 			'packaging_cost'  => $packaging,
 			'delete_data'     => ! empty( $input['delete_data'] ),
+			'modules'         => $modules,
 		);
 	}
 

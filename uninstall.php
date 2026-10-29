@@ -44,8 +44,16 @@ function munafa_uninstall_site(): void {
 		'munafa_packaging_cost',
 		'munafa_setup_done',
 		'munafa_delete_data',
+		'munafa_modules',
 	);
 	foreach ( $options as $option ) {
+		delete_option( $option );
+	}
+
+	// Module settings: "munafa_module_checkout" and any added by add-ons.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$module_options = $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'munafa_module_' ) . '%' ) );
+	foreach ( $module_options as $option ) {
 		delete_option( $option );
 	}
 

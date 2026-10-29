@@ -7,6 +7,7 @@
 
 namespace Munafa\Rest;
 
+use Munafa\Modules\Registry;
 use Munafa\Settings\Settings;
 use Munafa\Tools\Recalculator;
 use WP_REST_Request;
@@ -127,12 +128,23 @@ final class SettingsController {
 			);
 		}
 
+		$modules = array();
+		foreach ( Registry::all() as $id => $module ) {
+			$modules[] = array(
+				'id'          => $id,
+				'name'        => $module->name(),
+				'description' => $module->description(),
+				'choices'     => (object) $module->choices(),
+			);
+		}
+
 		return array(
 			'settings'      => $settings,
 			'choices'       => array(
 				'countries' => $countries,
 				'gateways'  => $gateways,
 				'statuses'  => $statuses,
+				'modules'   => $modules,
 			),
 			'recalculating' => Recalculator::is_running(),
 		);

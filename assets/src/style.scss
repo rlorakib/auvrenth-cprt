@@ -203,6 +203,54 @@ $bad: #b32d2e;
 		gap: 8px;
 		margin-bottom: 32px;
 	}
+
+	&__tabs .components-tab-panel__tabs {
+		flex-wrap: wrap;
+		margin-bottom: 16px;
+		border-bottom: 1px solid $border;
+	}
+
+	&__patterns textarea {
+		max-width: 480px;
+		font-family: monospace;
+	}
+}
+
+.munafa-modules {
+	display: grid;
+	gap: 12px;
+	margin-bottom: 16px;
+
+	.munafa-module {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+
+		> .components-base-control {
+			flex: 1 1 320px;
+		}
+	}
+
+	.munafa-card__note {
+		margin: 0;
+	}
+}
+
+.munafa-checkout-fields {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 12px;
+}
+
+.munafa-phone-test {
+	margin-top: 12px;
+
+	p {
+		margin: 4px 0 0;
+		font-weight: 600;
+	}
 }
 
 .munafa-zones {

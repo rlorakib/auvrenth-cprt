@@ -44,6 +44,7 @@ final class Plugin {
 		Tools\Recalculator::register();
 		Rest\ReportsController::register();
 		Rest\SettingsController::register();
+		Modules\Registry::boot();
 
 		if ( is_admin() ) {
 			Admin\DashboardPage::register();

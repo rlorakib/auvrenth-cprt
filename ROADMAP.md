@@ -100,11 +100,23 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 ---
 
+## Phase 3.6 – Module system + Simple checkout (free)
+
+**Goal:** Ek plugin, alada plugin na. Notun feature module hishebe on/off, shob setting Munafa Settings e.
+
+- [x] Module system: `Modules\Module` + `Modules\Registry`, add-on er jonno `munafa_modules` filter
+- [x] Munafa Settings tab e bhag: Profit, (on thaka module er tab), Modules, Advanced
+- [x] Simple checkout module: last name, company, address line 2, city, postcode → default / required / optional / hidden (Checkout block + classic duitatei)
+- [x] Phone number check: seller er pattern (`01#########`), Bangla/Hindi digit o space/dash thik kore save
+- [ ] Browser e nije check: Modules tab e on, Checkout tab, block checkout e field lukano ar bhul phone e error
+
+---
+
 ## Phase 4 – Polish & compliance (Week 8)
 
 - [ ] Sob output escape, input sanitize, nonce check
 - [ ] i18n: `.pot` generate + **Bangla (bn_BD) translation**
-- [ ] `uninstall.php` (setting e "delete data on uninstall" option)
+- [ ] `uninstall.php` (setting e "delete data on uninstall" option) – code done, "delete on" path browser/local e test baki
 - [ ] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error
 - [ ] PHP 7.4 / 8.1 / 8.3 + latest 2 WooCommerce version e test
 - [ ] `readme.txt`, banner, icon, 5 ta screenshot

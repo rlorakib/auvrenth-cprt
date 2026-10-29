@@ -33,7 +33,7 @@ The owner communicates in Banglish (Bangla in Latin script). Reply in the same s
 ```
 munafa.php            Plugin header, constants, bootstrap
 uninstall.php
-src/                  PHP classes (Admin/, Rest/, Profit/, Db/, Settings/)
+src/                  PHP classes (Admin/, Rest/, Profit/, Db/, Settings/, Modules/)
 assets/src/           React source (dashboard, settings)
 assets/build/         Built JS/CSS (generated, do not edit)
 languages/            .pot and bn_BD translation
@@ -66,6 +66,11 @@ readme.txt            WordPress.org readme
   so no hardcoded state codes, city names, gateways or currency
 - A schema change bumps `Installer::DB_VERSION`; a settings shape change bumps `Settings::VERSION`
   and adds a step to `Settings::maybe_migrate()`
+- One plugin, no separate plugins per feature. A feature the seller can turn on/off is a module:
+  a `Modules\Module` subclass listed in `Modules\Registry` (add-ons and Pro use the `munafa_modules`
+  filter). Its hooks run only while it is on; its settings are saved through `Settings\Settings`
+  and edited on its own tab of Munafa Settings (React panel registered in `modulePanels()`, add-ons
+  via the `munafa.settings.modulePanels` JS filter). New modules start off by default
 - Heavy work (recalculating many orders) goes through Action Scheduler in batches
 - No external CSS frameworks (Tailwind/Bootstrap) in wp-admin
 - Pro-only code stays behind Freemius checks and out of the WordPress.org build
