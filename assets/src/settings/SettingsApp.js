@@ -253,6 +253,24 @@ export default function SettingsApp() {
 				</div>
 			</Section>
 
+			<Section
+				title={ __( 'Uninstall', 'munafa' ) }
+				description={ __(
+					'When Munafa is deleted from the Plugins screen, also delete its profit data, settings, product cost prices and order courier charges. Your orders and products stay. This cannot be undone.',
+					'munafa'
+				) }
+			>
+				<CheckboxControl
+					label={ __(
+						'Delete all Munafa data when the plugin is deleted',
+						'munafa'
+					) }
+					checked={ settings.delete_data }
+					onChange={ update( 'delete_data' ) }
+					__nextHasNoMarginBottom
+				/>
+			</Section>
+
 			<div className="munafa-settings__actions">
 				<Button
 					variant="primary"

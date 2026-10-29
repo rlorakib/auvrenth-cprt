@@ -33,6 +33,7 @@ final class Settings {
 	const STATUSES_OPTION  = 'munafa_report_statuses';
 	const PACKAGING_OPTION = 'munafa_packaging_cost';
 	const SETUP_OPTION     = 'munafa_setup_done';
+	const DELETE_OPTION    = 'munafa_delete_data';
 
 	/**
 	 * Highest return charge accepted, in percent of the delivery charge.
@@ -143,6 +144,13 @@ final class Settings {
 	}
 
 	/**
+	 * Whether uninstall.php should delete Munafa's tables, settings and meta. Off by default.
+	 */
+	public static function delete_data_on_uninstall(): bool {
+		return 'yes' === get_option( self::DELETE_OPTION );
+	}
+
+	/**
 	 * Store currency symbol for labels, without the trailing space WooCommerce adds to some (e.g. "৳&nbsp;").
 	 */
 	public static function currency_symbol(): string {
@@ -179,6 +187,7 @@ final class Settings {
 			'return_reasons'  => $reasons,
 			'report_statuses' => self::report_statuses(),
 			'packaging_cost'  => self::packaging_cost(),
+			'delete_data'     => self::delete_data_on_uninstall(),
 			'setup_done'      => self::is_setup_done(),
 		);
 	}
@@ -201,6 +210,7 @@ final class Settings {
 		update_option( self::REASONS_OPTION, $clean['return_reasons'], false );
 		update_option( self::STATUSES_OPTION, $clean['report_statuses'], false );
 		update_option( self::PACKAGING_OPTION, $clean['packaging_cost'], false );
+		update_option( self::DELETE_OPTION, $clean['delete_data'] ? 'yes' : 'no', false );
 		update_option( self::SETUP_OPTION, 'yes', false );
 
 		return self::all();
@@ -329,6 +339,7 @@ final class Settings {
 			'return_reasons'  => array_values( $reasons ),
 			'report_statuses' => $statuses,
 			'packaging_cost'  => $packaging,
+			'delete_data'     => ! empty( $input['delete_data'] ),
 		);
 	}
 
