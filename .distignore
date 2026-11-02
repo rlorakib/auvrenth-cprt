@@ -1,0 +1,17 @@
+.git
+.gitattributes
+.gitignore
+.distignore
+.phpunit.result.cache
+node_modules
+tests
+assets/src
+phpcs.xml.dist
+phpunit.xml.dist
+package.json
+package-lock.json
+composer.lock
+CLAUDE.md
+ROADMAP.md
+*.zip
+*.log

@@ -1,16 +1,16 @@
 <?php
 /**
  * Plugin Name:          Munafa – COD Profit & Return Tracker for WooCommerce
- * Plugin URI:           https://munafa.app
  * Description:          See the real net profit of every COD order: product cost, courier charge, fees and return loss.
  * Version:              0.1.0
  * Requires at least:    6.5
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
- * Author:               Md. Rakib Hossen
+ * Author:               Auvrenth Studio
  * License:              GPL-2.0-or-later
  * License URI:          https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:          munafa
+ * Domain Path:          /languages
  * WC requires at least: 9.0
  * WC tested up to:      11.1
  *

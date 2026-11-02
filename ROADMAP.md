@@ -114,12 +114,14 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 ## Phase 4 – Polish & compliance (Week 8)
 
-- [ ] Sob output escape, input sanitize, nonce check
-- [ ] i18n: `.pot` generate + **Bangla (bn_BD) translation**
+- [x] Sob output escape, input sanitize, nonce check (code review kora, issue pai nai)
+- [x] i18n: `.pot` generate (`languages/`, `npm run make-pot`). Bangla (bn_BD) bundled translation soriye felechi, pore translate.wordpress.org e hobe
 - [ ] `uninstall.php` (setting e "delete data on uninstall" option) – code done, "delete on" path browser/local e test baki
-- [ ] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error
-- [ ] PHP 7.4 / 8.1 / 8.3 + latest 2 WooCommerce version e test
-- [ ] `readme.txt`, banner, icon, 5 ta screenshot
+- [x] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error/warning (`wp plugin check Munafa --slug=munafa`; hidden file/md file release build e baad jay, `.distignore`)
+- [ ] PHP 7.4 / 8.1 / 8.3 + latest 2 WooCommerce version e test (phpcs PHPCompatibility clean, runtime test baki)
+- [x] `readme.txt`, banner, icon (`wp-org-assets/munafa/`)
+- [ ] 5 ta screenshot (real Munafa screen theke, `wp-org-showcase/` er gulo onno plugin er)
+- [ ] `readme.txt` e `Contributors: auvrenthstudio` ei naam e wordpress.org account ache kina dekha
 
 **Claude ke bolben:**
 > Do a security review of the whole plugin against WordPress.org guidelines. List issues first, then fix them.

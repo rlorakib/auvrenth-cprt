@@ -8,7 +8,7 @@
     "build": "wp-scripts build assets/src/index.js --output-path=assets/build",
     "start": "wp-scripts start assets/src/index.js --output-path=assets/build",
     "lint:js": "wp-scripts lint-js assets/src",
-    "make-pot": "wp i18n make-pot . languages/munafa.pot --exclude=node_modules,vendor,assets/src"
+    "make-pot": "wp i18n make-pot . languages/munafa.pot --slug=munafa --exclude=node_modules,vendor,tests,assets/src,languages"
   },
   "devDependencies": {
     "@wordpress/scripts": "^30.0.0",

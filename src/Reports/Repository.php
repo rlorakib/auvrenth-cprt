@@ -17,6 +17,7 @@ defined( 'ABSPATH' ) || exit;
 // so the interpolated SQL below is safe; every value goes through $wpdb->prepare().
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
 // The sniff can't count arguments passed as one merged array.
 // phpcs:disable WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
