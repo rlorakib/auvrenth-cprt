@@ -2,12 +2,12 @@
 /**
  * Tests for the profit calculator.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Tests\Unit;
+namespace Cprt\Tests\Unit;
 
-use Munafa\Profit\Calculator;
+use Cprt\Profit\Calculator;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -2,12 +2,12 @@
 /**
  * Tests for phone number patterns.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Tests\Unit;
+namespace Cprt\Tests\Unit;
 
-use Munafa\Modules\Checkout\PhoneMask;
+use Cprt\Modules\Checkout\PhoneMask;
 use PHPUnit\Framework\TestCase;
 
 /**

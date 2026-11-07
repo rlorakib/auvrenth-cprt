@@ -1,28 +1,28 @@
 <?php
 /**
- * Base class for Munafa modules.
+ * Base class for Auvrenth CPRT modules.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Modules;
+namespace Cprt\Modules;
 
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * A feature the seller can turn on or off on the Modules tab of Munafa Settings.
+ * A feature the seller can turn on or off on the Modules tab of Auvrenth CPRT Settings.
  *
  * Its hooks are added only while it is on, and its settings are edited on its own
- * tab of the same screen. Add-ons add their modules with the `munafa_modules` filter.
+ * tab of the same screen. Add-ons add their modules with the `cprt_modules` filter.
  */
 abstract class Module {
 
 	/**
 	 * Option names are this prefix plus the module ID.
 	 */
-	const OPTION_PREFIX = 'munafa_module_';
+	const OPTION_PREFIX = 'cprt_module_';
 
 	/**
 	 * Unique ID, lowercase letters, numbers, dashes and underscores (e.g. `checkout`).

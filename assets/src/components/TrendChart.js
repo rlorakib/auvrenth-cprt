@@ -50,9 +50,9 @@ export default function TrendChart( {
 	onIntervalChange,
 } ) {
 	const intervals = [
-		{ value: 'hour', label: __( 'Hourly', 'munafa' ) },
-		{ value: 'day', label: __( 'Daily', 'munafa' ) },
-		{ value: 'week', label: __( 'Weekly', 'munafa' ) },
+		{ value: 'hour', label: __( 'Hourly', 'auvrenth-cprt' ) },
+		{ value: 'day', label: __( 'Daily', 'auvrenth-cprt' ) },
+		{ value: 'week', label: __( 'Weekly', 'auvrenth-cprt' ) },
 	];
 
 	// Hourly rows are "Y-m-d H:00", the others "Y-m-d". Going by the row itself keeps
@@ -67,10 +67,10 @@ export default function TrendChart( {
 			: shortDate( key );
 
 	return (
-		<section className="munafa-card munafa-trend">
-			<div className="munafa-card__header">
-				<h2>{ __( 'Revenue and profit', 'munafa' ) }</h2>
-				<div className="munafa-toggle">
+		<section className="cprt-card cprt-trend">
+			<div className="cprt-card__header">
+				<h2>{ __( 'Revenue and profit', 'auvrenth-cprt' ) }</h2>
+				<div className="cprt-toggle">
 					{ intervals.map( ( option ) => (
 						<Button
 							key={ option.value }
@@ -88,7 +88,7 @@ export default function TrendChart( {
 					) ) }
 				</div>
 			</div>
-			<div className="munafa-trend__chart">
+			<div className="cprt-trend__chart">
 				<ResponsiveContainer width="100%" height={ 300 }>
 					<ComposedChart
 						data={ data }
@@ -117,13 +117,13 @@ export default function TrendChart( {
 						<ReferenceLine y={ 0 } stroke="#8c8f94" />
 						<Bar
 							dataKey="revenue"
-							name={ __( 'Revenue', 'munafa' ) }
+							name={ __( 'Revenue', 'auvrenth-cprt' ) }
 							fill={ REVENUE_COLOR }
 							radius={ [ 3, 3, 0, 0 ] }
 						/>
 						<Line
 							dataKey="net_profit"
-							name={ __( 'Net profit', 'munafa' ) }
+							name={ __( 'Net profit', 'auvrenth-cprt' ) }
 							stroke={ PROFIT_COLOR }
 							strokeWidth={ 2 }
 							dot={ false }

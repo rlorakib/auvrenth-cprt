@@ -2,33 +2,33 @@
 /**
  * Order profit storage.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Profit;
+namespace Cprt\Profit;
 
-use Munafa\Db\Installer;
-use Munafa\Orders\ReturnStatus;
-use Munafa\Settings\Settings;
+use Cprt\Db\Installer;
+use Cprt\Orders\ReturnStatus;
+use Cprt\Settings\Settings;
 use WC_Order;
 use WC_Order_Refund;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Calculates an order's profit and stores it in the Munafa table.
+ * Calculates an order's profit and stores it in the Auvrenth CPRT table.
  */
 final class OrderProfit {
 
 	/**
 	 * Order meta key for a courier charge entered on the order, replacing the default.
 	 */
-	const COURIER_META = '_munafa_courier_cost';
+	const COURIER_META = '_cprt_courier_cost';
 
 	/**
 	 * Order meta key for why a parcel was returned (a key of Settings::return_reasons()).
 	 */
-	const REASON_META = '_munafa_return_reason';
+	const REASON_META = '_cprt_return_reason';
 
 	/**
 	 * Recalculate and save the profit of one order.

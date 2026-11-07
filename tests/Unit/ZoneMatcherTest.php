@@ -2,12 +2,12 @@
 /**
  * Tests for courier zone matching.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Tests\Unit;
+namespace Cprt\Tests\Unit;
 
-use Munafa\Profit\ZoneMatcher;
+use Cprt\Profit\ZoneMatcher;
 use PHPUnit\Framework\TestCase;
 
 /**

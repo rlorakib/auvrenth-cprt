@@ -14,12 +14,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Munafa\\": "src/"
+            "Cprt\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Munafa\\Tests\\": "tests/"
+            "Cprt\\Tests\\": "tests/"
         }
     },
     "config": {

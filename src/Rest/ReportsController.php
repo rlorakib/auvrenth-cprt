@@ -2,13 +2,13 @@
 /**
  * Report REST API.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Rest;
+namespace Cprt\Rest;
 
-use Munafa\Reports\DateRange;
-use Munafa\Reports\Repository;
+use Cprt\Reports\DateRange;
+use Cprt\Reports\Repository;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -16,14 +16,14 @@ use WP_REST_Server;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Routes under `munafa/v1` that feed the dashboard.
+ * Routes under `cprt/v1` that feed the dashboard.
  */
 final class ReportsController {
 
 	/**
 	 * REST namespace.
 	 */
-	const NAMESPACE = 'munafa/v1';
+	const NAMESPACE = 'cprt/v1';
 
 	/**
 	 * Register hooks.
@@ -150,8 +150,8 @@ final class ReportsController {
 		);
 
 		return array(
-			'after'  => $date + array( 'description' => __( 'First day (Y-m-d, site time). Defaults to 30 days before `before`.', 'munafa' ) ),
-			'before' => $date + array( 'description' => __( 'Last day (Y-m-d, site time). Defaults to today.', 'munafa' ) ),
+			'after'  => $date + array( 'description' => __( 'First day (Y-m-d, site time). Defaults to 30 days before `before`.', 'auvrenth-cprt' ) ),
+			'before' => $date + array( 'description' => __( 'Last day (Y-m-d, site time). Defaults to today.', 'auvrenth-cprt' ) ),
 		);
 	}
 

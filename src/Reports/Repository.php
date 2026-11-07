@@ -2,14 +2,14 @@
 /**
  * Report queries.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Reports;
+namespace Cprt\Reports;
 
-use Munafa\Db\Installer;
-use Munafa\Orders\ReturnStatus;
-use Munafa\Settings\Settings;
+use Cprt\Db\Installer;
+use Cprt\Orders\ReturnStatus;
+use Cprt\Settings\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 // phpcs:disable WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 /**
- * Reads profit reports from the Munafa tables.
+ * Reads profit reports from the Auvrenth CPRT tables.
  */
 final class Repository {
 
@@ -38,11 +38,11 @@ final class Repository {
 	 */
 	public static function statuses(): array {
 		/**
-		 * Filters which order statuses Munafa reports count (without the `wc-` prefix).
+		 * Filters which order statuses Auvrenth CPRT reports count (without the `wc-` prefix).
 		 *
 		 * @param string[] $statuses Order statuses.
 		 */
-		$statuses = apply_filters( 'munafa_report_statuses', Settings::report_statuses() );
+		$statuses = apply_filters( 'cprt_report_statuses', Settings::report_statuses() );
 		return array_values( array_filter( array_map( 'sanitize_key', (array) $statuses ) ) );
 	}
 
@@ -207,7 +207,7 @@ final class Repository {
 				$product = wc_get_product( (int) $row['product_id'] );
 				return array(
 					'id'           => (int) $row['product_id'],
-					'name'         => $product ? $product->get_name() : __( 'Deleted product', 'munafa' ),
+					'name'         => $product ? $product->get_name() : __( 'Deleted product', 'auvrenth-cprt' ),
 					'edit_url'     => $product ? get_edit_post_link( $product->get_id(), 'raw' ) : '',
 					'qty'          => (int) $row['qty'],
 					'returned'     => (int) $row['returned'],
@@ -281,7 +281,7 @@ final class Repository {
 			'reasons' => array_map(
 				static function ( $row ) use ( $reason_names ) {
 					if ( '' === $row['reason'] ) {
-						$name = __( 'Not set', 'munafa' );
+						$name = __( 'Not set', 'auvrenth-cprt' );
 					} else {
 						// A reason deleted from the settings still shows its stored key.
 						$name = $reason_names[ $row['reason'] ] ?? $row['reason'];
@@ -306,7 +306,7 @@ final class Repository {
 	 */
 	private static function area_name( string $country, string $state ): string {
 		if ( '' === $country ) {
-			return __( 'Unknown', 'munafa' );
+			return __( 'Unknown', 'auvrenth-cprt' );
 		}
 
 		$countries    = WC()->countries->get_countries();
@@ -318,7 +318,7 @@ final class Repository {
 		$states = (array) WC()->countries->get_states( $country );
 		return sprintf(
 			/* translators: 1: state or district, 2: country */
-			__( '%1$s, %2$s', 'munafa' ),
+			__( '%1$s, %2$s', 'auvrenth-cprt' ),
 			$states[ $state ] ?? $state,
 			$country_name
 		);

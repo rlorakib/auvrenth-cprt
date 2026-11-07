@@ -7,12 +7,12 @@ import { __ } from '@wordpress/i18n';
 import { TODAY, presetRange } from '../utils';
 
 const PRESETS = [
-	{ value: 'today', label: __( 'Today', 'munafa' ) },
-	{ value: '7', label: __( 'Last 7 days', 'munafa' ) },
-	{ value: '30', label: __( 'Last 30 days', 'munafa' ) },
-	{ value: '90', label: __( 'Last 90 days', 'munafa' ) },
-	{ value: 'month', label: __( 'This month', 'munafa' ) },
-	{ value: 'custom', label: __( 'Custom range', 'munafa' ) },
+	{ value: 'today', label: __( 'Today', 'auvrenth-cprt' ) },
+	{ value: '7', label: __( 'Last 7 days', 'auvrenth-cprt' ) },
+	{ value: '30', label: __( 'Last 30 days', 'auvrenth-cprt' ) },
+	{ value: '90', label: __( 'Last 90 days', 'auvrenth-cprt' ) },
+	{ value: 'month', label: __( 'This month', 'auvrenth-cprt' ) },
+	{ value: 'custom', label: __( 'Custom range', 'auvrenth-cprt' ) },
 ];
 
 /**
@@ -36,9 +36,9 @@ export default function DateRangePicker( { value, onChange } ) {
 	};
 
 	return (
-		<div className="munafa-date-range">
+		<div className="cprt-date-range">
 			<SelectControl
-				label={ __( 'Period', 'munafa' ) }
+				label={ __( 'Period', 'auvrenth-cprt' ) }
 				hideLabelFromVision
 				value={ value.preset }
 				options={ PRESETS }
@@ -50,7 +50,7 @@ export default function DateRangePicker( { value, onChange } ) {
 				<>
 					<TextControl
 						type="date"
-						label={ __( 'From', 'munafa' ) }
+						label={ __( 'From', 'auvrenth-cprt' ) }
 						value={ value.after }
 						max={ value.before }
 						onChange={ ( date ) => setDate( 'after', date ) }
@@ -59,7 +59,7 @@ export default function DateRangePicker( { value, onChange } ) {
 					/>
 					<TextControl
 						type="date"
-						label={ __( 'To', 'munafa' ) }
+						label={ __( 'To', 'auvrenth-cprt' ) }
 						value={ value.before }
 						min={ value.after }
 						max={ TODAY }

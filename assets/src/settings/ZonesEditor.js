@@ -26,7 +26,7 @@ function buildAreas( countries ) {
 			country.code,
 			sprintf(
 				/* translators: %s: country name */
-				__( '%s (all areas)', 'munafa' ),
+				__( '%s (all areas)', 'auvrenth-cprt' ),
 				country.name
 			)
 		);
@@ -35,7 +35,7 @@ function buildAreas( countries ) {
 				`${ country.code }:${ state.code }`,
 				sprintf(
 					/* translators: 1: state or district, 2: country */
-					__( '%1$s, %2$s', 'munafa' ),
+					__( '%1$s, %2$s', 'auvrenth-cprt' ),
 					state.name,
 					country.name
 				)
@@ -55,14 +55,14 @@ function buildAreas( countries ) {
  */
 function ChargeFields( { zone, onChange } ) {
 	return (
-		<div className="munafa-zone__charges">
+		<div className="cprt-zone__charges">
 			<TextControl
 				type="number"
 				min="0"
 				step="0.01"
 				label={ sprintf(
 					/* translators: %s: currency symbol */
-					__( 'Delivery charge (%s)', 'munafa' ),
+					__( 'Delivery charge (%s)', 'auvrenth-cprt' ),
 					CURRENCY
 				) }
 				value={ zone.delivery_charge }
@@ -77,10 +77,10 @@ function ChargeFields( { zone, onChange } ) {
 				min="0"
 				max="200"
 				step="0.01"
-				label={ __( 'Return charge (% of delivery charge)', 'munafa' ) }
+				label={ __( 'Return charge (% of delivery charge)', 'auvrenth-cprt' ) }
 				help={ __(
 					'What the courier charges to bring a parcel back.',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 				value={ zone.return_percent }
 				onChange={ ( value ) =>
@@ -136,37 +136,37 @@ export default function ZonesEditor( {
 		] );
 
 	return (
-		<div className="munafa-zones">
+		<div className="cprt-zones">
 			{ ! zones.length && (
-				<p className="munafa-empty">
+				<p className="cprt-empty">
 					{ __(
 						'No zones yet. Every order uses "Everywhere else" until you add one.',
-						'munafa'
+						'auvrenth-cprt'
 					) }
 				</p>
 			) }
 
 			{ zones.map( ( zone, index ) => (
 				<div
-					className="munafa-zone"
+					className="cprt-zone"
 					key={ zone.id || `new-${ index }` }
 				>
-					<div className="munafa-zone__header">
+					<div className="cprt-zone__header">
 						<strong>
 							{ sprintf(
 								/* translators: %d: zone number */
-								__( 'Zone %d', 'munafa' ),
+								__( 'Zone %d', 'auvrenth-cprt' ),
 								index + 1
 							) }
 						</strong>
-						<div className="munafa-zone__tools">
+						<div className="cprt-zone__tools">
 							<Button
 								size="small"
 								variant="tertiary"
 								disabled={ 0 === index }
 								onClick={ () => move( index, -1 ) }
 							>
-								{ __( 'Move up', 'munafa' ) }
+								{ __( 'Move up', 'auvrenth-cprt' ) }
 							</Button>
 							<Button
 								size="small"
@@ -174,7 +174,7 @@ export default function ZonesEditor( {
 								disabled={ index === zones.length - 1 }
 								onClick={ () => move( index, 1 ) }
 							>
-								{ __( 'Move down', 'munafa' ) }
+								{ __( 'Move down', 'auvrenth-cprt' ) }
 							</Button>
 							<Button
 								size="small"
@@ -186,14 +186,14 @@ export default function ZonesEditor( {
 									)
 								}
 							>
-								{ __( 'Remove', 'munafa' ) }
+								{ __( 'Remove', 'auvrenth-cprt' ) }
 							</Button>
 						</div>
 					</div>
 
 					<TextControl
-						label={ __( 'Zone name', 'munafa' ) }
-						placeholder={ __( 'e.g. Inside city', 'munafa' ) }
+						label={ __( 'Zone name', 'auvrenth-cprt' ) }
+						placeholder={ __( 'e.g. Inside city', 'auvrenth-cprt' ) }
 						value={ zone.name }
 						onChange={ ( name ) =>
 							setZone( index, { ...zone, name } )
@@ -203,7 +203,7 @@ export default function ZonesEditor( {
 					/>
 
 					<FormTokenField
-						label={ __( 'Delivery areas', 'munafa' ) }
+						label={ __( 'Delivery areas', 'auvrenth-cprt' ) }
 						value={ zone.areas.map(
 							( code ) => areas.labels.get( code ) || code
 						) }
@@ -239,17 +239,17 @@ export default function ZonesEditor( {
 			) ) }
 
 			<Button variant="secondary" onClick={ add }>
-				{ __( 'Add zone', 'munafa' ) }
+				{ __( 'Add zone', 'auvrenth-cprt' ) }
 			</Button>
 
-			<div className="munafa-zone munafa-zone--default">
-				<div className="munafa-zone__header">
-					<strong>{ __( 'Everywhere else', 'munafa' ) }</strong>
+			<div className="cprt-zone cprt-zone--default">
+				<div className="cprt-zone__header">
+					<strong>{ __( 'Everywhere else', 'auvrenth-cprt' ) }</strong>
 				</div>
-				<p className="munafa-card__note">
+				<p className="cprt-card__note">
 					{ __(
 						'Used for addresses no zone above covers.',
-						'munafa'
+						'auvrenth-cprt'
 					) }
 				</p>
 				<ChargeFields

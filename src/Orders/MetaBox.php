@@ -2,14 +2,14 @@
 /**
  * Profit box on the order edit screen.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Orders;
+namespace Cprt\Orders;
 
-use Munafa\Admin\DashboardPage;
-use Munafa\Profit\OrderProfit;
-use Munafa\Settings\Settings;
+use Cprt\Admin\DashboardPage;
+use Cprt\Profit\OrderProfit;
+use Cprt\Settings\Settings;
 use WC_Order;
 use WP_Post;
 
@@ -40,8 +40,8 @@ final class MetaBox {
 		}
 
 		add_meta_box(
-			'munafa-order-profit',
-			__( 'Munafa – Profit', 'munafa' ),
+			'cprt-order-profit',
+			__( 'Auvrenth CPRT – Profit', 'auvrenth-cprt' ),
 			array( self::class, 'render' ),
 			wc_get_page_screen_id( 'shop-order' ),
 			'side',
@@ -72,19 +72,19 @@ final class MetaBox {
 	private static function render_breakdown( WC_Order $order ): void {
 		$row = OrderProfit::get( $order->get_id() );
 		if ( ! $row ) {
-			echo '<p>' . esc_html__( 'Profit is calculated after the order is saved.', 'munafa' ) . '</p>';
+			echo '<p>' . esc_html__( 'Profit is calculated after the order is saved.', 'auvrenth-cprt' ) . '</p>';
 			return;
 		}
 
 		$currency = array( 'currency' => $order->get_currency() );
 		$lines    = array(
-			'revenue'        => __( 'Revenue', 'munafa' ),
-			'product_cost'   => __( 'Product cost', 'munafa' ),
-			'courier_cost'   => __( 'Courier charge', 'munafa' ),
-			'cod_fee'        => __( 'COD charge', 'munafa' ),
-			'gateway_fee'    => __( 'Gateway fee', 'munafa' ),
-			'return_cost'    => __( 'Return charge', 'munafa' ),
-			'packaging_cost' => __( 'Packaging', 'munafa' ),
+			'revenue'        => __( 'Revenue', 'auvrenth-cprt' ),
+			'product_cost'   => __( 'Product cost', 'auvrenth-cprt' ),
+			'courier_cost'   => __( 'Courier charge', 'auvrenth-cprt' ),
+			'cod_fee'        => __( 'COD charge', 'auvrenth-cprt' ),
+			'gateway_fee'    => __( 'Gateway fee', 'auvrenth-cprt' ),
+			'return_cost'    => __( 'Return charge', 'auvrenth-cprt' ),
+			'packaging_cost' => __( 'Packaging', 'auvrenth-cprt' ),
 		);
 
 		echo '<table class="widefat striped" style="border:0"><tbody>';
@@ -104,7 +104,7 @@ final class MetaBox {
 		$profit = (float) $row['net_profit'];
 		printf(
 			'<tr><td><strong>%1$s</strong></td><td style="text-align:right;color:%2$s"><strong>%3$s</strong></td></tr>',
-			esc_html__( 'Net profit', 'munafa' ),
+			esc_html__( 'Net profit', 'auvrenth-cprt' ),
 			$profit < 0 ? '#b32d2e' : '#007017',
 			wp_kses_post( wc_price( $profit, $currency ) )
 		);
@@ -112,7 +112,7 @@ final class MetaBox {
 
 		if ( (int) $row['missing_cost'] ) {
 			echo '<p class="description" style="color:#996800">';
-			echo esc_html__( 'Some products in this order have no cost price, so profit is shown higher than it really is.', 'munafa' );
+			echo esc_html__( 'Some products in this order have no cost price, so profit is shown higher than it really is.', 'auvrenth-cprt' );
 			echo '</p>';
 		}
 	}
@@ -130,27 +130,27 @@ final class MetaBox {
 		if ( ! Settings::is_setup_done() ) {
 			printf(
 				'<p class="description" style="color:#996800">%1$s <a href="%2$s">%3$s</a></p>',
-				esc_html__( 'Munafa is not set up yet, so courier charges and fees may be wrong.', 'munafa' ),
+				esc_html__( 'Auvrenth CPRT is not set up yet, so courier charges and fees may be wrong.', 'auvrenth-cprt' ),
 				esc_url( DashboardPage::settings_url() ),
-				esc_html__( 'Set up Munafa', 'munafa' )
+				esc_html__( 'Set up Auvrenth CPRT', 'auvrenth-cprt' )
 			);
 		}
 		?>
 		<p>
-			<label for="munafa_courier_cost">
+			<label for="cprt_courier_cost">
 				<?php
 				/* translators: %s: currency symbol */
-				echo esc_html( sprintf( __( 'Courier charge for this order (%s)', 'munafa' ), Settings::currency_symbol() ) );
+				echo esc_html( sprintf( __( 'Courier charge for this order (%s)', 'auvrenth-cprt' ), Settings::currency_symbol() ) );
 				?>
 			</label>
-			<input type="number" min="0" step="0.01" class="widefat" id="munafa_courier_cost" name="munafa_courier_cost"
+			<input type="number" min="0" step="0.01" class="widefat" id="cprt_courier_cost" name="cprt_courier_cost"
 				value="<?php echo esc_attr( null === $override ? '' : wc_format_decimal( $override ) ); ?>"
-				placeholder="<?php echo esc_attr( sprintf( /* translators: 1: courier zone name, 2: its delivery charge */ __( '%1$s: %2$s', 'munafa' ), $zone['name'], wc_format_decimal( $zone['delivery_charge'] ) ) ); ?>">
+				placeholder="<?php echo esc_attr( sprintf( /* translators: 1: courier zone name, 2: its delivery charge */ __( '%1$s: %2$s', 'auvrenth-cprt' ), $zone['name'], wc_format_decimal( $zone['delivery_charge'] ) ) ); ?>">
 		</p>
 		<p>
-			<label for="munafa_return_reason"><?php esc_html_e( 'Return reason (for returned orders)', 'munafa' ); ?></label>
-			<select class="widefat" id="munafa_return_reason" name="munafa_return_reason">
-				<option value=""><?php esc_html_e( '— None —', 'munafa' ); ?></option>
+			<label for="cprt_return_reason"><?php esc_html_e( 'Return reason (for returned orders)', 'auvrenth-cprt' ); ?></label>
+			<select class="widefat" id="cprt_return_reason" name="cprt_return_reason">
+				<option value=""><?php esc_html_e( '— None —', 'auvrenth-cprt' ); ?></option>
 				<?php foreach ( Settings::return_reasons() as $key => $label ) : ?>
 					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $reason, $key ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
@@ -167,7 +167,7 @@ final class MetaBox {
 	 */
 	public static function save( $order_id, $order = null ): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by WooCommerce before this hook.
-		if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['munafa_courier_cost'] ) ) {
+		if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['cprt_courier_cost'] ) ) {
 			// The box was not on the form, so there is nothing to save (and nothing to clear).
 			return;
 		}
@@ -179,8 +179,8 @@ final class MetaBox {
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified by WooCommerce before this hook.
-		$courier = wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['munafa_courier_cost'] ) ) );
-		$reason  = isset( $_POST['munafa_return_reason'] ) ? sanitize_key( wp_unslash( $_POST['munafa_return_reason'] ) ) : '';
+		$courier = wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['cprt_courier_cost'] ) ) );
+		$reason  = isset( $_POST['cprt_return_reason'] ) ? sanitize_key( wp_unslash( $_POST['cprt_return_reason'] ) ) : '';
 		// phpcs:enable
 
 		if ( '' === $courier ) {

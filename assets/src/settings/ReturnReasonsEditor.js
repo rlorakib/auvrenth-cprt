@@ -18,16 +18,16 @@ export default function ReturnReasonsEditor( { reasons, onChange } ) {
 		);
 
 	return (
-		<div className="munafa-reasons">
+		<div className="cprt-reasons">
 			{ reasons.map( ( reason, index ) => (
 				<div
-					className="munafa-reasons__row"
+					className="cprt-reasons__row"
 					key={ reason.key || `new-${ index }` }
 				>
 					<TextControl
 						label={ sprintf(
 							/* translators: %d: reason number */
-							__( 'Reason %d', 'munafa' ),
+							__( 'Reason %d', 'auvrenth-cprt' ),
 							index + 1
 						) }
 						hideLabelFromVision
@@ -45,7 +45,7 @@ export default function ReturnReasonsEditor( { reasons, onChange } ) {
 							)
 						}
 					>
-						{ __( 'Remove', 'munafa' ) }
+						{ __( 'Remove', 'auvrenth-cprt' ) }
 					</Button>
 				</div>
 			) ) }
@@ -55,7 +55,7 @@ export default function ReturnReasonsEditor( { reasons, onChange } ) {
 					onChange( [ ...reasons, { key: '', label: '' } ] )
 				}
 			>
-				{ __( 'Add reason', 'munafa' ) }
+				{ __( 'Add reason', 'auvrenth-cprt' ) }
 			</Button>
 		</div>
 	);

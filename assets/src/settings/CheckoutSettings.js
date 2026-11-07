@@ -56,20 +56,20 @@ export default function CheckoutSettings( { settings, choices, onChange } ) {
 	const [ testNumber, setTestNumber ] = useState( '' );
 
 	const fields = [
-		{ key: 'last_name', label: __( 'Last name', 'munafa' ) },
-		{ key: 'company', label: __( 'Company', 'munafa' ) },
+		{ key: 'last_name', label: __( 'Last name', 'auvrenth-cprt' ) },
+		{ key: 'company', label: __( 'Company', 'auvrenth-cprt' ) },
 		{
 			key: 'address_2',
-			label: __( 'Apartment, suite, etc. (address line 2)', 'munafa' ),
+			label: __( 'Apartment, suite, etc. (address line 2)', 'auvrenth-cprt' ),
 		},
-		{ key: 'city', label: __( 'Town / City', 'munafa' ) },
-		{ key: 'postcode', label: __( 'Postcode', 'munafa' ) },
+		{ key: 'city', label: __( 'Town / City', 'auvrenth-cprt' ) },
+		{ key: 'postcode', label: __( 'Postcode', 'auvrenth-cprt' ) },
 	];
 	const rules = [
-		{ value: 'default', label: __( 'As WooCommerce has it', 'munafa' ) },
-		{ value: 'required', label: __( 'Required', 'munafa' ) },
-		{ value: 'optional', label: __( 'Optional', 'munafa' ) },
-		{ value: 'hidden', label: __( 'Hidden', 'munafa' ) },
+		{ value: 'default', label: __( 'As WooCommerce has it', 'auvrenth-cprt' ) },
+		{ value: 'required', label: __( 'Required', 'auvrenth-cprt' ) },
+		{ value: 'optional', label: __( 'Optional', 'auvrenth-cprt' ) },
+		{ value: 'hidden', label: __( 'Hidden', 'auvrenth-cprt' ) },
 	];
 
 	const patterns = settings.phone_patterns || [];
@@ -83,17 +83,17 @@ export default function CheckoutSettings( { settings, choices, onChange } ) {
 
 	return (
 		<>
-			<section className="munafa-card munafa-settings__section">
-				<div className="munafa-card__header">
-					<h2>{ __( 'Checkout fields', 'munafa' ) }</h2>
+			<section className="cprt-card cprt-settings__section">
+				<div className="cprt-card__header">
+					<h2>{ __( 'Checkout fields', 'auvrenth-cprt' ) }</h2>
 				</div>
-				<p className="munafa-card__note">
+				<p className="cprt-card__note">
 					{ __(
 						'Fewer fields mean more finished orders. First name, address, state/district, country and phone always stay. Works with the Checkout block and the classic checkout.',
-						'munafa'
+						'auvrenth-cprt'
 					) }
 				</p>
-				<div className="munafa-checkout-fields">
+				<div className="cprt-checkout-fields">
 					{ fields.map( ( field ) => (
 						<SelectControl
 							key={ field.key }
@@ -110,14 +110,14 @@ export default function CheckoutSettings( { settings, choices, onChange } ) {
 				</div>
 			</section>
 
-			<section className="munafa-card munafa-settings__section">
-				<div className="munafa-card__header">
-					<h2>{ __( 'Phone number check', 'munafa' ) }</h2>
+			<section className="cprt-card cprt-settings__section">
+				<div className="cprt-card__header">
+					<h2>{ __( 'Phone number check', 'auvrenth-cprt' ) }</h2>
 				</div>
-				<p className="munafa-card__note">
+				<p className="cprt-card__note">
 					{ __(
 						'The courier calls this number, so a wrong one means a returned parcel. Orders whose phone fits none of these patterns are stopped at checkout. Leave empty to accept any number.',
-						'munafa'
+						'auvrenth-cprt'
 					) }
 				</p>
 
@@ -125,16 +125,16 @@ export default function CheckoutSettings( { settings, choices, onChange } ) {
 					<Notice status="warning" isDismissible={ false }>
 						{ __(
 							'Customers can still leave the phone empty. Make Phone required in the Checkout block settings (classic checkout: Customize → WooCommerce → Checkout).',
-							'munafa'
+							'auvrenth-cprt'
 						) }
 					</Notice>
 				) }
 
 				<TextareaControl
-					label={ __( 'Accepted patterns, one per line', 'munafa' ) }
+					label={ __( 'Accepted patterns, one per line', 'auvrenth-cprt' ) }
 					help={ __(
 						'# is any digit; everything else must match exactly. For example, 01######### accepts 11-digit numbers starting with 01, and +8801######### the same number with the country code. Spaces, dashes and Bangla or Hindi digits are fine.',
-						'munafa'
+						'auvrenth-cprt'
 					) }
 					value={ patterns.join( '\n' ) }
 					onChange={ ( text ) =>
@@ -144,14 +144,14 @@ export default function CheckoutSettings( { settings, choices, onChange } ) {
 						} )
 					}
 					rows={ 4 }
-					className="munafa-settings__patterns"
+					className="cprt-settings__patterns"
 					__nextHasNoMarginBottom
 				/>
 
 				{ filled.length > 0 && (
-					<div className="munafa-settings__short munafa-phone-test">
+					<div className="cprt-settings__short cprt-phone-test">
 						<TextControl
-							label={ __( 'Try a number', 'munafa' ) }
+							label={ __( 'Try a number', 'auvrenth-cprt' ) }
 							type="tel"
 							value={ testNumber }
 							onChange={ setTestNumber }
@@ -161,11 +161,11 @@ export default function CheckoutSettings( { settings, choices, onChange } ) {
 						{ '' !== testNumber.trim() &&
 							( phoneMatches( testNumber, filled ) ? (
 								<p className="is-good">
-									{ __( 'Accepted', 'munafa' ) }
+									{ __( 'Accepted', 'auvrenth-cprt' ) }
 								</p>
 							) : (
 								<p className="is-bad">
-									{ __( 'Rejected', 'munafa' ) }
+									{ __( 'Rejected', 'auvrenth-cprt' ) }
 								</p>
 							) ) }
 					</div>

@@ -5,7 +5,6 @@
 .phpunit.result.cache
 node_modules
 tests
-assets/src
 phpcs.xml.dist
 phpunit.xml.dist
 package.json

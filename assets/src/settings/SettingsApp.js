@@ -25,13 +25,13 @@ import ZonesEditor from './ZonesEditor';
 /**
  * Settings tab of each module, keyed by module ID.
  *
- * Add-ons add theirs with the `munafa.settings.modulePanels` filter from `@wordpress/hooks`.
+ * Add-ons add theirs with the `cprt.settings.modulePanels` filter from `@wordpress/hooks`.
  * A panel gets `settings`, `choices` and `onChange`, like CheckoutSettings.
  *
  * @return {Object} Components keyed by module ID.
  */
 function modulePanels() {
-	return applyFilters( 'munafa.settings.modulePanels', {
+	return applyFilters( 'cprt.settings.modulePanels', {
 		checkout: CheckoutSettings,
 	} );
 }
@@ -46,12 +46,12 @@ function modulePanels() {
  */
 function Section( { title, description, children } ) {
 	return (
-		<section className="munafa-card munafa-settings__section">
-			<div className="munafa-card__header">
+		<section className="cprt-card cprt-settings__section">
+			<div className="cprt-card__header">
 				<h2>{ title }</h2>
 			</div>
 			{ description && (
-				<p className="munafa-card__note">{ description }</p>
+				<p className="cprt-card__note">{ description }</p>
 			) }
 			{ children }
 		</section>
@@ -68,7 +68,7 @@ export default function SettingsApp() {
 	const [ openTab, setOpenTab ] = useState( { name: 'general', key: 0 } );
 
 	useEffect( () => {
-		apiFetch( { path: '/munafa/v1/settings' } )
+		apiFetch( { path: '/cprt/v1/settings' } )
 			.then( ( response ) => {
 				setData( response );
 				setSettings( response.settings );
@@ -85,7 +85,7 @@ export default function SettingsApp() {
 				{ notice.message }
 			</Notice>
 		) : (
-			<div className="munafa-dashboard__loading">
+			<div className="cprt-dashboard__loading">
 				<Spinner />
 			</div>
 		);
@@ -107,7 +107,7 @@ export default function SettingsApp() {
 		setSaving( true );
 		setNotice( null );
 		apiFetch( {
-			path: '/munafa/v1/settings',
+			path: '/cprt/v1/settings',
 			method: 'POST',
 			data: settings,
 		} )
@@ -117,7 +117,7 @@ export default function SettingsApp() {
 					status: 'success',
 					message: __(
 						'Settings saved. Recalculate your orders so old orders use them too.',
-						'munafa'
+						'auvrenth-cprt'
 					),
 					recalculate: true,
 				} );
@@ -129,14 +129,14 @@ export default function SettingsApp() {
 	};
 
 	const recalculate = () => {
-		apiFetch( { path: '/munafa/v1/recalculate', method: 'POST' } )
+		apiFetch( { path: '/cprt/v1/recalculate', method: 'POST' } )
 			.then( () => {
 				setRecalculating( true );
 				setNotice( {
 					status: 'info',
 					message: __(
 						'Recalculating all orders in the background. This can take a few minutes on big stores.',
-						'munafa'
+						'auvrenth-cprt'
 					),
 				} );
 			} )
@@ -163,19 +163,19 @@ export default function SettingsApp() {
 		.map( ( module ) => ( { name: module.id, title: module.name } ) );
 
 	const tabs = [
-		{ name: 'general', title: __( 'Profit', 'munafa' ) },
+		{ name: 'general', title: __( 'Profit', 'auvrenth-cprt' ) },
 		...moduleTabs,
-		{ name: 'modules', title: __( 'Modules', 'munafa' ) },
-		{ name: 'advanced', title: __( 'Advanced', 'munafa' ) },
+		{ name: 'modules', title: __( 'Modules', 'auvrenth-cprt' ) },
+		{ name: 'advanced', title: __( 'Advanced', 'auvrenth-cprt' ) },
 	];
 
 	const renderGeneral = () => (
 		<>
 			<Section
-				title={ __( 'Courier zones', 'munafa' ) }
+				title={ __( 'Courier zones', 'auvrenth-cprt' ) }
 				description={ __(
 					'What your courier charges you per parcel, by delivery area. Each order uses the first zone that covers its address, or "Everywhere else".',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			>
 				<ZonesEditor
@@ -188,10 +188,10 @@ export default function SettingsApp() {
 			</Section>
 
 			<Section
-				title={ __( 'Payment methods', 'munafa' ) }
+				title={ __( 'Payment methods', 'auvrenth-cprt' ) }
 				description={ __(
 					"Tick the methods where the courier collects cash. Their fee is the courier's COD charge; for the others it is the payment gateway fee.",
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			>
 				<PaymentMethodsEditor
@@ -202,20 +202,20 @@ export default function SettingsApp() {
 			</Section>
 
 			<Section
-				title={ __( 'Packaging', 'munafa' ) }
+				title={ __( 'Packaging', 'auvrenth-cprt' ) }
 				description={ __(
 					'Box, poly bag, tape and printing for one parcel. Counted on delivered and returned orders.',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			>
 				<TextControl
 					type="number"
 					min="0"
 					step="0.01"
-					className="munafa-settings__short"
+					className="cprt-settings__short"
 					label={ sprintf(
 						/* translators: %s: currency symbol */
-						__( 'Packaging cost per order (%s)', 'munafa' ),
+						__( 'Packaging cost per order (%s)', 'auvrenth-cprt' ),
 						CURRENCY
 					) }
 					value={ settings.packaging_cost }
@@ -226,10 +226,10 @@ export default function SettingsApp() {
 			</Section>
 
 			<Section
-				title={ __( 'Return reasons', 'munafa' ) }
+				title={ __( 'Return reasons', 'auvrenth-cprt' ) }
 				description={ __(
 					'Reasons you can pick on a returned order. Renaming one keeps it on old orders.',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			>
 				<ReturnReasonsEditor
@@ -239,13 +239,13 @@ export default function SettingsApp() {
 			</Section>
 
 			<Section
-				title={ __( 'Reports', 'munafa' ) }
+				title={ __( 'Reports', 'auvrenth-cprt' ) }
 				description={ __(
 					'Order statuses that count as sales (and returns) on the dashboard.',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			>
-				<div className="munafa-settings__checkboxes">
+				<div className="cprt-settings__checkboxes">
 					{ data.choices.statuses.map( ( status ) => (
 						<CheckboxControl
 							key={ status.key }
@@ -266,16 +266,16 @@ export default function SettingsApp() {
 
 	const renderAdvanced = () => (
 		<Section
-			title={ __( 'Uninstall', 'munafa' ) }
+			title={ __( 'Uninstall', 'auvrenth-cprt' ) }
 			description={ __(
-				'When Munafa is deleted from the Plugins screen, also delete its profit data, settings, product cost prices and order courier charges. Your orders and products stay. This cannot be undone.',
-				'munafa'
+				'When Auvrenth CPRT is deleted from the Plugins screen, also delete its profit data, settings, product cost prices and order courier charges. Your orders and products stay. This cannot be undone.',
+				'auvrenth-cprt'
 			) }
 		>
 			<CheckboxControl
 				label={ __(
-					'Delete all Munafa data when the plugin is deleted',
-					'munafa'
+					'Delete all Auvrenth CPRT data when the plugin is deleted',
+					'auvrenth-cprt'
 				) }
 				checked={ settings.delete_data }
 				onChange={ update( 'delete_data' ) }
@@ -323,16 +323,16 @@ export default function SettingsApp() {
 	};
 
 	return (
-		<div className="munafa-dashboard munafa-settings">
-			<header className="munafa-dashboard__header">
-				<h1>{ __( 'Munafa settings', 'munafa' ) }</h1>
+		<div className="cprt-dashboard cprt-settings">
+			<header className="cprt-dashboard__header">
+				<h1>{ __( 'Auvrenth CPRT settings', 'auvrenth-cprt' ) }</h1>
 			</header>
 
 			{ ! settings.setup_done && (
 				<Notice status="warning" isDismissible={ false }>
 					{ __(
 						'Welcome! Add the courier charges and payment fees you pay, then save. Until then, profit uses whatever is below and may be wrong.',
-						'munafa'
+						'auvrenth-cprt'
 					) }
 				</Notice>
 			) }
@@ -347,7 +347,7 @@ export default function SettingsApp() {
 									{
 										label: __(
 											'Recalculate all orders',
-											'munafa'
+											'auvrenth-cprt'
 										),
 										onClick: recalculate,
 										variant: 'primary',
@@ -362,21 +362,21 @@ export default function SettingsApp() {
 
 			<TabPanel
 				key={ openTab.key }
-				className="munafa-settings__tabs"
+				className="cprt-settings__tabs"
 				tabs={ tabs }
 				initialTabName={ openTab.name }
 			>
 				{ renderTab }
 			</TabPanel>
 
-			<div className="munafa-settings__actions">
+			<div className="cprt-settings__actions">
 				<Button
 					variant="primary"
 					onClick={ save }
 					isBusy={ saving }
 					disabled={ saving }
 				>
-					{ __( 'Save settings', 'munafa' ) }
+					{ __( 'Save settings', 'auvrenth-cprt' ) }
 				</Button>
 				<Button
 					variant="secondary"
@@ -384,8 +384,8 @@ export default function SettingsApp() {
 					disabled={ recalculating }
 				>
 					{ recalculating
-						? __( 'Recalculating…', 'munafa' )
-						: __( 'Recalculate all orders', 'munafa' ) }
+						? __( 'Recalculating…', 'auvrenth-cprt' )
+						: __( 'Recalculate all orders', 'auvrenth-cprt' ) }
 				</Button>
 			</div>
 		</div>

@@ -2,10 +2,10 @@
 /**
  * Product cost lookup.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Profit;
+namespace Cprt\Profit;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WC_Order;
@@ -18,14 +18,14 @@ defined( 'ABSPATH' ) || exit;
  * Finds the cost of an order line item.
  *
  * Uses WooCommerce's native Cost of Goods Sold when that feature is on,
- * otherwise Munafa's own `_munafa_cost` product meta.
+ * otherwise Auvrenth CPRT's own `_cprt_cost` product meta.
  */
 final class CostResolver {
 
 	/**
 	 * Product meta key for the fallback cost field.
 	 */
-	const META_KEY = '_munafa_cost';
+	const META_KEY = '_cprt_cost';
 
 	/**
 	 * Whether WooCommerce's native Cost of Goods Sold feature is enabled.

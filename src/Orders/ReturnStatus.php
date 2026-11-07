@@ -2,10 +2,10 @@
 /**
  * "Returned" order status.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Orders;
+namespace Cprt\Orders;
 
 use WC_Order;
 
@@ -32,7 +32,7 @@ final class ReturnStatus {
 		add_filter( 'bulk_actions-edit-shop_order', array( self::class, 'add_bulk_action' ) );
 
 		add_action( 'woocommerce_order_status_' . self::STATUS, array( self::class, 'restock' ), 10, 2 );
-		add_action( 'admin_head', array( self::class, 'badge_style' ) );
+		add_action( 'admin_enqueue_scripts', array( self::class, 'badge_style' ) );
 	}
 
 	/**
@@ -42,13 +42,13 @@ final class ReturnStatus {
 		register_post_status(
 			'wc-' . self::STATUS,
 			array(
-				'label'                     => _x( 'Returned', 'Order status', 'munafa' ),
+				'label'                     => _x( 'Returned', 'Order status', 'auvrenth-cprt' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
 				/* translators: %s: number of orders */
-				'label_count'               => _n_noop( 'Returned <span class="count">(%s)</span>', 'Returned <span class="count">(%s)</span>', 'munafa' ),
+				'label_count'               => _n_noop( 'Returned <span class="count">(%s)</span>', 'Returned <span class="count">(%s)</span>', 'auvrenth-cprt' ),
 			)
 		);
 	}
@@ -64,12 +64,12 @@ final class ReturnStatus {
 		foreach ( $statuses as $key => $label ) {
 			$with_returned[ $key ] = $label;
 			if ( 'wc-processing' === $key ) {
-				$with_returned[ 'wc-' . self::STATUS ] = _x( 'Returned', 'Order status', 'munafa' );
+				$with_returned[ 'wc-' . self::STATUS ] = _x( 'Returned', 'Order status', 'auvrenth-cprt' );
 			}
 		}
 
 		if ( ! isset( $with_returned[ 'wc-' . self::STATUS ] ) ) {
-			$with_returned[ 'wc-' . self::STATUS ] = _x( 'Returned', 'Order status', 'munafa' );
+			$with_returned[ 'wc-' . self::STATUS ] = _x( 'Returned', 'Order status', 'auvrenth-cprt' );
 		}
 
 		return $with_returned;
@@ -83,7 +83,7 @@ final class ReturnStatus {
 	 * @return array<string, string>
 	 */
 	public static function add_bulk_action( $actions ) {
-		$actions[ 'mark_' . self::STATUS ] = __( 'Change status to returned', 'munafa' );
+		$actions[ 'mark_' . self::STATUS ] = __( 'Change status to returned', 'auvrenth-cprt' );
 		return $actions;
 	}
 
@@ -101,6 +101,8 @@ final class ReturnStatus {
 	 * Colour the Returned badge in the orders list.
 	 */
 	public static function badge_style(): void {
-		echo '<style>.order-status.status-' . esc_attr( self::STATUS ) . '{background:#f8d7da;color:#842029}</style>';
+		wp_register_style( 'auvrenth-cprt-badge', false, array(), CPRT_VERSION );
+		wp_enqueue_style( 'auvrenth-cprt-badge' );
+		wp_add_inline_style( 'auvrenth-cprt-badge', '.order-status.status-' . sanitize_html_class( self::STATUS ) . '{background:#f8d7da;color:#842029}' );
 	}
 }

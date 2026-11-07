@@ -2,13 +2,13 @@
 /**
  * Cost price field on the product edit screen.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Products;
+namespace Cprt\Products;
 
-use Munafa\Profit\CostResolver;
-use Munafa\Settings\Settings;
+use Cprt\Profit\CostResolver;
+use Cprt\Settings\Settings;
 use WC_Product;
 use WC_Product_Variation;
 use WP_Post;
@@ -43,7 +43,7 @@ final class CostField {
 	 */
 	private static function label(): string {
 		/* translators: %s: currency symbol */
-		return sprintf( __( 'Cost price (%s)', 'munafa' ), Settings::currency_symbol() );
+		return sprintf( __( 'Cost price (%s)', 'auvrenth-cprt' ), Settings::currency_symbol() );
 	}
 
 	/**
@@ -56,7 +56,7 @@ final class CostField {
 				'label'       => self::label(),
 				'data_type'   => 'price',
 				'desc_tip'    => true,
-				'description' => __( 'What one unit costs you. Munafa uses it to calculate order profit.', 'munafa' ),
+				'description' => __( 'What one unit costs you. Auvrenth CPRT uses it to calculate order profit.', 'auvrenth-cprt' ),
 			)
 		);
 	}
@@ -92,7 +92,7 @@ final class CostField {
 				'label'         => self::label(),
 				'data_type'     => 'price',
 				'wrapper_class' => 'form-row form-row-full',
-				'placeholder'   => __( 'Same as parent product', 'munafa' ),
+				'placeholder'   => __( 'Same as parent product', 'auvrenth-cprt' ),
 			)
 		);
 	}

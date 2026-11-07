@@ -23,31 +23,31 @@ export default function ReturnsReport( { areas, reasons } ) {
 	);
 
 	return (
-		<section className="munafa-card">
-			<div className="munafa-card__header">
-				<h2>{ __( 'Returns', 'munafa' ) }</h2>
+		<section className="cprt-card">
+			<div className="cprt-card__header">
+				<h2>{ __( 'Returns', 'auvrenth-cprt' ) }</h2>
 			</div>
 
 			{ ! totalReturns ? (
-				<p className="munafa-empty">
-					{ __( 'No returned orders in this period.', 'munafa' ) }
+				<p className="cprt-empty">
+					{ __( 'No returned orders in this period.', 'auvrenth-cprt' ) }
 				</p>
 			) : (
 				<>
-					<h3>{ __( 'Why parcels came back', 'munafa' ) }</h3>
-					<ul className="munafa-bars">
+					<h3>{ __( 'Why parcels came back', 'auvrenth-cprt' ) }</h3>
+					<ul className="cprt-bars">
 						{ reasons.map( ( reason ) => (
 							<li key={ reason.reason || 'none' }>
-								<div className="munafa-bars__label">
+								<div className="cprt-bars__label">
 									<span>{ reason.name }</span>
 									<span>
 										{ reason.returned } ·{ ' ' }
 										{ formatMoney( -reason.loss ) }
 									</span>
 								</div>
-								<div className="munafa-bars__track">
+								<div className="cprt-bars__track">
 									<div
-										className="munafa-bars__fill"
+										className="cprt-bars__fill"
 										style={ {
 											width: `${
 												( reason.returned /
@@ -61,23 +61,23 @@ export default function ReturnsReport( { areas, reasons } ) {
 						) ) }
 					</ul>
 
-					<h3>{ __( 'Areas with the most returns', 'munafa' ) }</h3>
-					<div className="munafa-table-wrap">
-						<table className="widefat striped munafa-table">
+					<h3>{ __( 'Areas with the most returns', 'auvrenth-cprt' ) }</h3>
+					<div className="cprt-table-wrap">
+						<table className="widefat striped cprt-table">
 							<thead>
 								<tr>
-									<th>{ __( 'Area', 'munafa' ) }</th>
+									<th>{ __( 'Area', 'auvrenth-cprt' ) }</th>
 									<th className="num">
-										{ __( 'Orders', 'munafa' ) }
+										{ __( 'Orders', 'auvrenth-cprt' ) }
 									</th>
 									<th className="num">
-										{ __( 'Returned', 'munafa' ) }
+										{ __( 'Returned', 'auvrenth-cprt' ) }
 									</th>
 									<th className="num">
-										{ __( 'Return rate', 'munafa' ) }
+										{ __( 'Return rate', 'auvrenth-cprt' ) }
 									</th>
 									<th className="num">
-										{ __( 'Loss', 'munafa' ) }
+										{ __( 'Loss', 'auvrenth-cprt' ) }
 									</th>
 								</tr>
 							</thead>

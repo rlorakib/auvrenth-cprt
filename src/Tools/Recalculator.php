@@ -2,13 +2,13 @@
 /**
  * Background recalculation of all orders.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Tools;
+namespace Cprt\Tools;
 
-use Munafa\Db\Installer;
-use Munafa\Profit\OrderProfit;
+use Cprt\Db\Installer;
+use Cprt\Profit\OrderProfit;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,12 +20,12 @@ final class Recalculator {
 	/**
 	 * Action Scheduler hook that processes one batch.
 	 */
-	const ACTION = 'munafa_recalculate_batch';
+	const ACTION = 'cprt_recalculate_batch';
 
 	/**
 	 * Action Scheduler group.
 	 */
-	const GROUP = 'munafa';
+	const GROUP = 'auvrenth-cprt';
 
 	/**
 	 * Orders per batch.

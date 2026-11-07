@@ -2,10 +2,10 @@
 /**
  * Database table setup.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Db;
+namespace Cprt\Db;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -22,19 +22,19 @@ final class Installer {
 	/**
 	 * Option that stores the installed schema version.
 	 */
-	const VERSION_OPTION = 'munafa_db_version';
+	const VERSION_OPTION = 'cprt_db_version';
 
 	/**
 	 * Option that asks for a full recalculation once Action Scheduler is ready.
 	 */
-	const RECALC_OPTION = 'munafa_needs_recalculation';
+	const RECALC_OPTION = 'cprt_needs_recalculation';
 
 	/**
 	 * Full name of the order profit table.
 	 */
 	public static function table(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'munafa_order_profit';
+		return $wpdb->prefix . 'cprt_order_profit';
 	}
 
 	/**
@@ -42,7 +42,7 @@ final class Installer {
 	 */
 	public static function items_table(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'munafa_order_items';
+		return $wpdb->prefix . 'cprt_order_items';
 	}
 
 	/**

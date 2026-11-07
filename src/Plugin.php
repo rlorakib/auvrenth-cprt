@@ -2,15 +2,15 @@
 /**
  * Main plugin bootstrap.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa;
+namespace Cprt;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Wires up Munafa once all plugins are loaded.
+ * Wires up Auvrenth CPRT once all plugins are loaded.
  */
 final class Plugin {
 
@@ -49,7 +49,8 @@ final class Plugin {
 		if ( is_admin() ) {
 			Admin\DashboardPage::register();
 			Orders\MetaBox::register();
-			Products\CostField::register();
+			// On init, not plugins_loaded: the COGS feature check loads translations.
+			add_action( 'init', array( Products\CostField::class, 'register' ) );
 		}
 	}
 }

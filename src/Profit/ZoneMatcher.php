@@ -2,10 +2,10 @@
 /**
  * Courier zone matching.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Profit;
+namespace Cprt\Profit;
 
 defined( 'ABSPATH' ) || exit;
 

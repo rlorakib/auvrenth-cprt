@@ -2,10 +2,10 @@
 /**
  * Phone number patterns.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Modules\Checkout;
+namespace Cprt\Modules\Checkout;
 
 defined( 'ABSPATH' ) || exit;
 

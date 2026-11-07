@@ -16,8 +16,8 @@ import { formatMoney, formatPercent } from '../utils';
 function Change( { current, previous, higherIsBad = false } ) {
 	if ( ! previous ) {
 		return (
-			<span className="munafa-kpi__change">
-				{ __( 'No data for the previous period', 'munafa' ) }
+			<span className="cprt-kpi__change">
+				{ __( 'No data for the previous period', 'auvrenth-cprt' ) }
 			</span>
 		);
 	}
@@ -28,11 +28,11 @@ function Change( { current, previous, higherIsBad = false } ) {
 
 	return (
 		<span
-			className={ `munafa-kpi__change ${ good ? 'is-good' : 'is-bad' }` }
+			className={ `cprt-kpi__change ${ good ? 'is-good' : 'is-bad' }` }
 		>
 			{ sprintf(
 				/* translators: 1: ▲ or ▼, 2: percentage change */
-				__( '%1$s %2$s vs previous period', 'munafa' ),
+				__( '%1$s %2$s vs previous period', 'auvrenth-cprt' ),
 				up ? '▲' : '▼',
 				formatPercent( Math.abs( change ) )
 			) }
@@ -48,7 +48,7 @@ function Change( { current, previous, higherIsBad = false } ) {
 export default function KpiCards( { current, previous } ) {
 	const cards = [
 		{
-			label: __( 'Revenue', 'munafa' ),
+			label: __( 'Revenue', 'auvrenth-cprt' ),
 			value: formatMoney( current.revenue ),
 			change: (
 				<Change
@@ -58,7 +58,7 @@ export default function KpiCards( { current, previous } ) {
 			),
 		},
 		{
-			label: __( 'Net profit', 'munafa' ),
+			label: __( 'Net profit', 'auvrenth-cprt' ),
 			value: formatMoney( current.net_profit ),
 			tone: current.net_profit < 0 ? 'is-bad' : 'is-good',
 			change: (
@@ -69,20 +69,20 @@ export default function KpiCards( { current, previous } ) {
 			),
 		},
 		{
-			label: __( 'Margin', 'munafa' ),
+			label: __( 'Margin', 'auvrenth-cprt' ),
 			value: formatPercent( current.margin ),
 			change: (
-				<span className="munafa-kpi__change">
+				<span className="cprt-kpi__change">
 					{ sprintf(
 						/* translators: %s: number of orders */
-						__( '%s orders', 'munafa' ),
+						__( '%s orders', 'auvrenth-cprt' ),
 						current.orders
 					) }
 				</span>
 			),
 		},
 		{
-			label: __( 'Return rate', 'munafa' ),
+			label: __( 'Return rate', 'auvrenth-cprt' ),
 			value: formatPercent( current.return_rate ),
 			tone: current.return_rate >= 20 ? 'is-bad' : '',
 			change: (
@@ -94,14 +94,14 @@ export default function KpiCards( { current, previous } ) {
 			),
 		},
 		{
-			label: __( 'Return loss', 'munafa' ),
+			label: __( 'Return loss', 'auvrenth-cprt' ),
 			value: formatMoney( current.return_loss ),
 			tone: current.return_loss > 0 ? 'is-bad' : '',
 			change: (
-				<span className="munafa-kpi__change">
+				<span className="cprt-kpi__change">
 					{ sprintf(
 						/* translators: %s: number of returned orders */
-						__( '%s returned orders', 'munafa' ),
+						__( '%s returned orders', 'auvrenth-cprt' ),
 						current.returned
 					) }
 				</span>
@@ -110,12 +110,12 @@ export default function KpiCards( { current, previous } ) {
 	];
 
 	return (
-		<div className="munafa-kpis">
+		<div className="cprt-kpis">
 			{ cards.map( ( card ) => (
-				<div className="munafa-card munafa-kpi" key={ card.label }>
-					<span className="munafa-kpi__label">{ card.label }</span>
+				<div className="cprt-card cprt-kpi" key={ card.label }>
+					<span className="cprt-kpi__label">{ card.label }</span>
 					<strong
-						className={ `munafa-kpi__value ${ card.tone || '' }` }
+						className={ `cprt-kpi__value ${ card.tone || '' }` }
 					>
 						{ card.value }
 					</strong>

@@ -1,11 +1,11 @@
-// Munafa dashboard. Colours follow the WordPress admin palette.
+// Auvrenth CPRT dashboard. Colours follow the WordPress admin palette.
 
 $border: #dcdcde;
 $muted: #646970;
 $good: #008a20;
 $bad: #b32d2e;
 
-.munafa-dashboard {
+.cprt-dashboard {
 	&__header {
 		display: flex;
 		flex-wrap: wrap;
@@ -53,7 +53,7 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-date-range {
+.cprt-date-range {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-end;
@@ -64,7 +64,7 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-card {
+.cprt-card {
 	background: #fff;
 	border: 1px solid $border;
 	border-radius: 4px;
@@ -95,13 +95,13 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-kpis {
+.cprt-kpis {
 	display: grid;
 	grid-template-columns: repeat(5, minmax(0, 1fr));
 	gap: 16px;
 }
 
-.munafa-kpi {
+.cprt-kpi {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -122,16 +122,16 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-toggle {
+.cprt-toggle {
 	display: flex;
 	gap: 4px;
 }
 
-.munafa-table-wrap {
+.cprt-table-wrap {
 	overflow-x: auto;
 }
 
-.munafa-table {
+.cprt-table {
 	border: 0;
 
 	th,
@@ -146,7 +146,7 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-badge {
+.cprt-badge {
 	display: inline-block;
 	margin-left: 6px;
 	padding: 0 6px;
@@ -156,7 +156,7 @@ $bad: #b32d2e;
 	font-size: 11px;
 }
 
-.munafa-bars {
+.cprt-bars {
 	margin: 0;
 
 	li {
@@ -183,7 +183,7 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-settings {
+.cprt-settings {
 	&__section {
 		margin-bottom: 16px;
 	}
@@ -216,12 +216,12 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-modules {
+.cprt-modules {
 	display: grid;
 	gap: 12px;
 	margin-bottom: 16px;
 
-	.munafa-module {
+	.cprt-module {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-start;
@@ -233,18 +233,18 @@ $bad: #b32d2e;
 		}
 	}
 
-	.munafa-card__note {
+	.cprt-card__note {
 		margin: 0;
 	}
 }
 
-.munafa-checkout-fields {
+.cprt-checkout-fields {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 	gap: 12px;
 }
 
-.munafa-phone-test {
+.cprt-phone-test {
 	margin-top: 12px;
 
 	p {
@@ -253,7 +253,7 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-zones {
+.cprt-zones {
 	display: grid;
 	gap: 12px;
 	justify-items: start;
@@ -267,7 +267,7 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-zone {
+.cprt-zone {
 	display: grid;
 	gap: 12px;
 	padding: 12px;
@@ -298,12 +298,12 @@ $bad: #b32d2e;
 		gap: 12px;
 	}
 
-	.munafa-card__note {
+	.cprt-card__note {
 		margin: 0;
 	}
 }
 
-.munafa-reasons {
+.cprt-reasons {
 	display: grid;
 	gap: 8px;
 	justify-items: start;
@@ -321,28 +321,28 @@ $bad: #b32d2e;
 	}
 }
 
-.munafa-empty {
+.cprt-empty {
 	color: $muted;
 }
 
-.munafa-dashboard .is-good {
+.cprt-dashboard .is-good {
 	color: $good;
 }
 
-.munafa-dashboard .is-bad {
+.cprt-dashboard .is-bad {
 	color: $bad;
 }
 
 @media (max-width: 1100px) {
-	.munafa-kpis {
+	.cprt-kpis {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 }
 
 @media (max-width: 782px) {
-	.munafa-kpis,
-	.munafa-dashboard__columns,
-	.munafa-zone__charges {
+	.cprt-kpis,
+	.cprt-dashboard__columns,
+	.cprt-zone__charges {
 		grid-template-columns: minmax(0, 1fr);
 	}
 }

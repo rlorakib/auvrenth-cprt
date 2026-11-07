@@ -2,12 +2,12 @@
 /**
  * Simple checkout module.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Modules\Checkout;
+namespace Cprt\Modules\Checkout;
 
-use Munafa\Modules\Module;
+use Cprt\Modules\Module;
 use WC_Order;
 use WP_Error;
 
@@ -48,14 +48,14 @@ final class CheckoutModule extends Module {
 	 * Name shown on the Modules tab.
 	 */
 	public function name(): string {
-		return __( 'Simple checkout', 'munafa' );
+		return __( 'Simple checkout', 'auvrenth-cprt' );
 	}
 
 	/**
 	 * What the module does.
 	 */
 	public function description(): string {
-		return __( 'Hide the checkout fields your customers struggle with, and stop orders with a wrong phone number before they are placed.', 'munafa' );
+		return __( 'Hide the checkout fields your customers struggle with, and stop orders with a wrong phone number before they are placed.', 'auvrenth-cprt' );
 	}
 
 	/**
@@ -90,9 +90,9 @@ final class CheckoutModule extends Module {
 			}
 			if ( ! PhoneMask::is_valid_pattern( $pattern ) ) {
 				return new WP_Error(
-					'munafa_invalid_settings',
+					'cprt_invalid_settings',
 					/* translators: %s: phone pattern the seller typed */
-					sprintf( __( '"%s" is not a phone pattern. Use digits, # for any digit, and + only at the start.', 'munafa' ), sanitize_text_field( $pattern ) ),
+					sprintf( __( '"%s" is not a phone pattern. Use digits, # for any digit, and + only at the start.', 'auvrenth-cprt' ), sanitize_text_field( $pattern ) ),
 					array( 'status' => 400 )
 				);
 			}
@@ -102,9 +102,9 @@ final class CheckoutModule extends Module {
 		$patterns = array_values( array_unique( $patterns ) );
 		if ( count( $patterns ) > self::MAX_PATTERNS ) {
 			return new WP_Error(
-				'munafa_invalid_settings',
+				'cprt_invalid_settings',
 				/* translators: %d: maximum number of patterns */
-				sprintf( __( 'Use at most %d phone patterns.', 'munafa' ), self::MAX_PATTERNS ),
+				sprintf( __( 'Use at most %d phone patterns.', 'auvrenth-cprt' ), self::MAX_PATTERNS ),
 				array( 'status' => 400 )
 			);
 		}
@@ -251,7 +251,7 @@ final class CheckoutModule extends Module {
 		unset( $group );
 		$message = $this->phone_error( (string) ( $fields['phone'] ?? '' ) );
 		if ( $message ) {
-			$errors->add( 'munafa_invalid_phone', $message );
+			$errors->add( 'cprt_invalid_phone', $message );
 		}
 	}
 
@@ -269,7 +269,7 @@ final class CheckoutModule extends Module {
 
 		return sprintf(
 			/* translators: 1: phone number the customer typed, 2: accepted formats, e.g. "01XXXXXXXXX, +8801XXXXXXXXX" */
-			__( '%1$s is not a valid phone number. Accepted formats: %2$s', 'munafa' ),
+			__( '%1$s is not a valid phone number. Accepted formats: %2$s', 'auvrenth-cprt' ),
 			esc_html( $phone ),
 			esc_html( implode( ', ', array_map( array( PhoneMask::class, 'example' ), $patterns ) ) )
 		);

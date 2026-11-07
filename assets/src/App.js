@@ -22,14 +22,14 @@ import {
 } from './utils';
 
 /**
- * GET a Munafa report.
+ * GET a Auvrenth CPRT report.
  *
- * @param {string} route Route under munafa/v1, e.g. `/summary`.
+ * @param {string} route Route under cprt/v1, e.g. `/summary`.
  * @param {Object} query Query arguments.
  * @return {Promise<Object>} Response data.
  */
 function fetchReport( route, query ) {
-	return apiFetch( { path: addQueryArgs( `/munafa/v1${ route }`, query ) } );
+	return apiFetch( { path: addQueryArgs( `/cprt/v1${ route }`, query ) } );
 }
 
 export default function App() {
@@ -97,9 +97,9 @@ export default function App() {
 	const missing = reports?.summary.current.missing_cost || 0;
 
 	return (
-		<div className="munafa-dashboard">
-			<header className="munafa-dashboard__header">
-				<h1>{ __( 'Munafa – Profit dashboard', 'munafa' ) }</h1>
+		<div className="cprt-dashboard">
+			<header className="cprt-dashboard__header">
+				<h1>{ __( 'Auvrenth CPRT – Profit dashboard', 'auvrenth-cprt' ) }</h1>
 				<DateRangePicker value={ range } onChange={ setRange } />
 			</header>
 
@@ -112,13 +112,13 @@ export default function App() {
 			{ ! SETUP_DONE && (
 				<Notice status="warning" isDismissible={ false }>
 					{ __(
-						'Munafa is not set up yet, so courier charges and fees in these numbers may be wrong.',
-						'munafa'
+						'Auvrenth CPRT is not set up yet, so courier charges and fees in these numbers may be wrong.',
+						'auvrenth-cprt'
 					) }{ ' ' }
 					<a href={ SETTINGS_URL }>
 						{ __(
 							'Set up courier zones and payment fees',
-							'munafa'
+							'auvrenth-cprt'
 						) }
 					</a>
 				</Notice>
@@ -132,18 +132,18 @@ export default function App() {
 							'%d order has products without a cost price, so profit is shown higher than it really is.',
 							'%d orders have products without a cost price, so profit is shown higher than it really is.',
 							missing,
-							'munafa'
+							'auvrenth-cprt'
 						),
 						missing
 					) }{ ' ' }
 					<a href={ PRODUCTS_URL }>
-						{ __( 'Add cost prices', 'munafa' ) }
+						{ __( 'Add cost prices', 'auvrenth-cprt' ) }
 					</a>
 				</Notice>
 			) }
 
 			{ ! reports && loading && (
-				<div className="munafa-dashboard__loading">
+				<div className="cprt-dashboard__loading">
 					<Spinner />
 				</div>
 			) }
@@ -152,8 +152,8 @@ export default function App() {
 				<div
 					className={
 						loading
-							? 'munafa-dashboard__body is-loading'
-							: 'munafa-dashboard__body'
+							? 'cprt-dashboard__body is-loading'
+							: 'cprt-dashboard__body'
 					}
 				>
 					<KpiCards
@@ -166,20 +166,20 @@ export default function App() {
 						multiDay={ days > 1 }
 						onIntervalChange={ changeInterval }
 					/>
-					<div className="munafa-dashboard__columns">
+					<div className="cprt-dashboard__columns">
 						<ProductsTable
 							profitable={ reports.profitable }
 							lossMaking={ reports.lossMaking }
 						/>
 						<ReturnsReport { ...reports.returns } />
 					</div>
-					<p className="munafa-dashboard__footer">
+					<p className="cprt-dashboard__footer">
 						{ __(
-							'Courier charges, fees and packaging come from your Munafa settings.',
-							'munafa'
+							'Courier charges, fees and packaging come from your Auvrenth CPRT settings.',
+							'auvrenth-cprt'
 						) }{ ' ' }
 						<a href={ SETTINGS_URL }>
-							{ __( 'Change settings', 'munafa' ) }
+							{ __( 'Change settings', 'auvrenth-cprt' ) }
 						</a>
 					</p>
 				</div>

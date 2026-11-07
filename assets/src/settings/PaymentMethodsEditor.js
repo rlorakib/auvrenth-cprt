@@ -17,8 +17,8 @@ export default function PaymentMethodsEditor( {
 } ) {
 	if ( ! gateways.length ) {
 		return (
-			<p className="munafa-empty">
-				{ __( 'WooCommerce has no payment methods.', 'munafa' ) }
+			<p className="cprt-empty">
+				{ __( 'WooCommerce has no payment methods.', 'auvrenth-cprt' ) }
 			</p>
 		);
 	}
@@ -30,13 +30,13 @@ export default function PaymentMethodsEditor( {
 		onChange( { ...methods, [ id ]: { ...methodFor( id ), ...changes } } );
 
 	return (
-		<div className="munafa-table-wrap">
-			<table className="widefat striped munafa-table">
+		<div className="cprt-table-wrap">
+			<table className="widefat striped cprt-table">
 				<thead>
 					<tr>
-						<th>{ __( 'Payment method', 'munafa' ) }</th>
-						<th>{ __( 'Cash on delivery', 'munafa' ) }</th>
-						<th>{ __( 'Fee (%)', 'munafa' ) }</th>
+						<th>{ __( 'Payment method', 'auvrenth-cprt' ) }</th>
+						<th>{ __( 'Cash on delivery', 'auvrenth-cprt' ) }</th>
+						<th>{ __( 'Fee (%)', 'auvrenth-cprt' ) }</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -47,8 +47,8 @@ export default function PaymentMethodsEditor( {
 								<td>
 									{ gateway.title }
 									{ ! gateway.enabled && (
-										<span className="munafa-badge">
-											{ __( 'Disabled', 'munafa' ) }
+										<span className="cprt-badge">
+											{ __( 'Disabled', 'auvrenth-cprt' ) }
 										</span>
 									) }
 								</td>
@@ -56,7 +56,7 @@ export default function PaymentMethodsEditor( {
 									<CheckboxControl
 										label={ __(
 											'Courier collects cash',
-											'munafa'
+											'auvrenth-cprt'
 										) }
 										checked={ method.is_cod }
 										onChange={ ( isCod ) =>
@@ -71,9 +71,9 @@ export default function PaymentMethodsEditor( {
 										min="0"
 										max="100"
 										step="0.01"
-										label={ __( 'Fee (%)', 'munafa' ) }
+										label={ __( 'Fee (%)', 'auvrenth-cprt' ) }
 										hideLabelFromVision
-										className="munafa-settings__short"
+										className="cprt-settings__short"
 										value={ method.fee_percent }
 										onChange={ ( fee ) =>
 											set( gateway.id, {

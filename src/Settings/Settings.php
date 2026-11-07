@@ -2,19 +2,19 @@
 /**
  * Plugin settings.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Settings;
+namespace Cprt\Settings;
 
-use Munafa\Modules\Registry;
-use Munafa\Orders\ReturnStatus;
+use Cprt\Modules\Registry;
+use Cprt\Orders\ReturnStatus;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Reads, validates and saves every Munafa setting.
+ * Reads, validates and saves every Auvrenth CPRT setting.
  *
  * Nothing here is tied to one country: sellers define their own courier zones,
  * payment method fees and return reasons.
@@ -26,15 +26,15 @@ final class Settings {
 	 */
 	const VERSION = '1';
 
-	const VERSION_OPTION   = 'munafa_settings_version';
-	const ZONES_OPTION     = 'munafa_courier_zones';
-	const DEFAULT_OPTION   = 'munafa_courier_default';
-	const PAYMENTS_OPTION  = 'munafa_payment_methods';
-	const REASONS_OPTION   = 'munafa_return_reasons';
-	const STATUSES_OPTION  = 'munafa_report_statuses';
-	const PACKAGING_OPTION = 'munafa_packaging_cost';
-	const SETUP_OPTION     = 'munafa_setup_done';
-	const DELETE_OPTION    = 'munafa_delete_data';
+	const VERSION_OPTION   = 'cprt_settings_version';
+	const ZONES_OPTION     = 'cprt_courier_zones';
+	const DEFAULT_OPTION   = 'cprt_courier_default';
+	const PAYMENTS_OPTION  = 'cprt_payment_methods';
+	const REASONS_OPTION   = 'cprt_return_reasons';
+	const STATUSES_OPTION  = 'cprt_report_statuses';
+	const PACKAGING_OPTION = 'cprt_packaging_cost';
+	const SETUP_OPTION     = 'cprt_setup_done';
+	const DELETE_OPTION    = 'cprt_delete_data';
 
 	/**
 	 * Highest return charge accepted, in percent of the delivery charge.
@@ -67,7 +67,7 @@ final class Settings {
 
 		return array(
 			'id'              => 'default',
-			'name'            => __( 'Everywhere else', 'munafa' ),
+			'name'            => __( 'Everywhere else', 'auvrenth-cprt' ),
 			'areas'           => array(),
 			'delivery_charge' => (float) ( $zone['delivery_charge'] ?? 0 ),
 			'return_percent'  => (float) ( $zone['return_percent'] ?? 0 ),
@@ -145,7 +145,7 @@ final class Settings {
 	}
 
 	/**
-	 * Whether uninstall.php should delete Munafa's tables, settings and meta. Off by default.
+	 * Whether uninstall.php should delete Auvrenth CPRT's tables, settings and meta. Off by default.
 	 */
 	public static function delete_data_on_uninstall(): bool {
 		return 'yes' === get_option( self::DELETE_OPTION );
@@ -252,11 +252,11 @@ final class Settings {
 			$zone = (array) $zone;
 			$name = sanitize_text_field( $zone['name'] ?? '' );
 			/* translators: %d: zone number */
-			$label = sprintf( __( 'Zone %d', 'munafa' ), $index + 1 );
+			$label = sprintf( __( 'Zone %d', 'auvrenth-cprt' ), $index + 1 );
 
 			if ( '' === $name ) {
 				/* translators: %s: zone label, e.g. "Zone 2" */
-				return self::error( sprintf( __( '%s needs a name.', 'munafa' ), $label ) );
+				return self::error( sprintf( __( '%s needs a name.', 'auvrenth-cprt' ), $label ) );
 			}
 
 			$areas = array();
@@ -264,14 +264,14 @@ final class Settings {
 				$area = is_scalar( $area ) ? strtoupper( sanitize_text_field( (string) $area ) ) : '';
 				if ( ! isset( $known_areas[ $area ] ) ) {
 					/* translators: 1: zone name, 2: area code */
-					return self::error( sprintf( __( 'Zone "%1$s" has an unknown area: %2$s.', 'munafa' ), $name, $area ) );
+					return self::error( sprintf( __( 'Zone "%1$s" has an unknown area: %2$s.', 'auvrenth-cprt' ), $name, $area ) );
 				}
 				$areas[] = $area;
 			}
 
 			if ( ! $areas ) {
 				/* translators: %s: zone name */
-				return self::error( sprintf( __( 'Zone "%s" needs at least one area.', 'munafa' ), $name ) );
+				return self::error( sprintf( __( 'Zone "%s" needs at least one area.', 'auvrenth-cprt' ), $name ) );
 			}
 
 			$charges = self::charges( $zone, $name );
@@ -287,7 +287,7 @@ final class Settings {
 			) + $charges;
 		}
 
-		$default = self::charges( (array) ( $input['default_zone'] ?? array() ), __( 'Everywhere else', 'munafa' ) );
+		$default = self::charges( (array) ( $input['default_zone'] ?? array() ), __( 'Everywhere else', 'auvrenth-cprt' ) );
 		if ( is_wp_error( $default ) ) {
 			return $default;
 		}
@@ -303,7 +303,7 @@ final class Settings {
 			$fee    = self::number( $method['fee_percent'] ?? 0 );
 			if ( null === $fee || $fee > 100 ) {
 				/* translators: %s: payment method ID */
-				return self::error( sprintf( __( 'The fee for "%s" must be between 0 and 100%%.', 'munafa' ), $id ) );
+				return self::error( sprintf( __( 'The fee for "%s" must be between 0 and 100%%.', 'auvrenth-cprt' ), $id ) );
 			}
 			$methods[ $id ] = array(
 				'is_cod'      => ! empty( $method['is_cod'] ),
@@ -346,12 +346,12 @@ final class Settings {
 		);
 		$statuses       = array_values( array_intersect( array_map( 'sanitize_key', (array) ( $input['report_statuses'] ?? array() ) ), $valid_statuses ) );
 		if ( ! $statuses ) {
-			return self::error( __( 'Choose at least one order status for reports.', 'munafa' ) );
+			return self::error( __( 'Choose at least one order status for reports.', 'auvrenth-cprt' ) );
 		}
 
 		$packaging = self::number( $input['packaging_cost'] ?? 0 );
 		if ( null === $packaging ) {
-			return self::error( __( 'Packaging cost must be 0 or more.', 'munafa' ) );
+			return self::error( __( 'Packaging cost must be 0 or more.', 'auvrenth-cprt' ) );
 		}
 
 		$modules = array();
@@ -421,11 +421,11 @@ final class Settings {
 	 */
 	private static function default_reasons(): array {
 		return array(
-			'customer_refused' => __( 'Customer refused', 'munafa' ),
-			'wrong_address'    => __( 'Wrong address', 'munafa' ),
-			'phone_off'        => __( 'Phone off / unreachable', 'munafa' ),
-			'not_available'    => __( 'Customer not available', 'munafa' ),
-			'other'            => __( 'Other', 'munafa' ),
+			'customer_refused' => __( 'Customer refused', 'auvrenth-cprt' ),
+			'wrong_address'    => __( 'Wrong address', 'auvrenth-cprt' ),
+			'phone_off'        => __( 'Phone off / unreachable', 'auvrenth-cprt' ),
+			'not_available'    => __( 'Customer not available', 'auvrenth-cprt' ),
+			'other'            => __( 'Other', 'auvrenth-cprt' ),
 		);
 	}
 
@@ -449,13 +449,13 @@ final class Settings {
 		$charge = self::number( $zone['delivery_charge'] ?? 0 );
 		if ( null === $charge ) {
 			/* translators: %s: zone name */
-			return self::error( sprintf( __( 'The delivery charge for "%s" must be 0 or more.', 'munafa' ), $name ) );
+			return self::error( sprintf( __( 'The delivery charge for "%s" must be 0 or more.', 'auvrenth-cprt' ), $name ) );
 		}
 
 		$percent = self::number( $zone['return_percent'] ?? 0 );
 		if ( null === $percent || $percent > self::MAX_RETURN_PERCENT ) {
 			/* translators: 1: zone name, 2: maximum percentage */
-			return self::error( sprintf( __( 'The return charge for "%1$s" must be between 0 and %2$d%%.', 'munafa' ), $name, self::MAX_RETURN_PERCENT ) );
+			return self::error( sprintf( __( 'The return charge for "%1$s" must be between 0 and %2$d%%.', 'auvrenth-cprt' ), $name, self::MAX_RETURN_PERCENT ) );
 		}
 
 		return array(
@@ -486,6 +486,6 @@ final class Settings {
 	 * @param string $message Message.
 	 */
 	private static function error( string $message ): WP_Error {
-		return new WP_Error( 'munafa_invalid_settings', $message, array( 'status' => 400 ) );
+		return new WP_Error( 'cprt_invalid_settings', $message, array( 'status' => 400 ) );
 	}
 }

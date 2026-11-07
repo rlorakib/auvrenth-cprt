@@ -20,7 +20,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="munafa"/>
+				<element value="auvrenth-cprt"/>
 			</property>
 		</properties>
 	</rule>
@@ -28,8 +28,8 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="munafa"/>
-				<element value="Munafa"/>
+				<element value="cprt"/>
+				<element value="Cprt"/>
 			</property>
 		</properties>
 	</rule>

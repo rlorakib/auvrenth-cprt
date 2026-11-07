@@ -13,20 +13,20 @@ import { formatMoney } from '../utils';
  */
 function Table( { products, empty } ) {
 	if ( ! products.length ) {
-		return <p className="munafa-empty">{ empty }</p>;
+		return <p className="cprt-empty">{ empty }</p>;
 	}
 
 	return (
-		<div className="munafa-table-wrap">
-			<table className="widefat striped munafa-table">
+		<div className="cprt-table-wrap">
+			<table className="widefat striped cprt-table">
 				<thead>
 					<tr>
-						<th>{ __( 'Product', 'munafa' ) }</th>
-						<th className="num">{ __( 'Sold', 'munafa' ) }</th>
-						<th className="num">{ __( 'Returned', 'munafa' ) }</th>
-						<th className="num">{ __( 'Revenue', 'munafa' ) }</th>
+						<th>{ __( 'Product', 'auvrenth-cprt' ) }</th>
+						<th className="num">{ __( 'Sold', 'auvrenth-cprt' ) }</th>
+						<th className="num">{ __( 'Returned', 'auvrenth-cprt' ) }</th>
+						<th className="num">{ __( 'Revenue', 'auvrenth-cprt' ) }</th>
 						<th className="num">
-							{ __( 'Gross profit', 'munafa' ) }
+							{ __( 'Gross profit', 'auvrenth-cprt' ) }
 						</th>
 					</tr>
 				</thead>
@@ -42,8 +42,8 @@ function Table( { products, empty } ) {
 									product.name
 								) }
 								{ product.missing_cost && (
-									<span className="munafa-badge">
-										{ __( 'No cost price', 'munafa' ) }
+									<span className="cprt-badge">
+										{ __( 'No cost price', 'auvrenth-cprt' ) }
 									</span>
 								) }
 							</td>
@@ -74,23 +74,23 @@ function Table( { products, empty } ) {
  */
 export default function ProductsTable( { profitable, lossMaking } ) {
 	return (
-		<section className="munafa-card">
-			<div className="munafa-card__header">
-				<h2>{ __( 'Products', 'munafa' ) }</h2>
+		<section className="cprt-card">
+			<div className="cprt-card__header">
+				<h2>{ __( 'Products', 'auvrenth-cprt' ) }</h2>
 			</div>
-			<p className="munafa-card__note">
+			<p className="cprt-card__note">
 				{ __(
 					'Gross profit is revenue minus cost price, before courier charges and fees.',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			</p>
 			<TabPanel
 				tabs={ [
 					{
 						name: 'profit',
-						title: __( 'Most profitable', 'munafa' ),
+						title: __( 'Most profitable', 'auvrenth-cprt' ),
 					},
-					{ name: 'loss', title: __( 'Loss making', 'munafa' ) },
+					{ name: 'loss', title: __( 'Loss making', 'auvrenth-cprt' ) },
 				] }
 			>
 				{ ( tab ) =>
@@ -99,13 +99,13 @@ export default function ProductsTable( { profitable, lossMaking } ) {
 							products={ lossMaking }
 							empty={ __(
 								'No product made a loss in this period.',
-								'munafa'
+								'auvrenth-cprt'
 							) }
 						/>
 					) : (
 						<Table
 							products={ profitable }
-							empty={ __( 'No sales in this period.', 'munafa' ) }
+							empty={ __( 'No sales in this period.', 'auvrenth-cprt' ) }
 						/>
 					)
 				}

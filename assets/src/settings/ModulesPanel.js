@@ -20,12 +20,12 @@ export default function ModulesPanel( {
 	onOpen,
 } ) {
 	return (
-		<div className="munafa-modules">
+		<div className="cprt-modules">
 			{ modules.map( ( module ) => {
 				const enabled = Boolean( state[ module.id ]?.enabled );
 				return (
 					<div
-						className="munafa-card munafa-module"
+						className="cprt-card cprt-module"
 						key={ module.id }
 					>
 						<ToggleControl
@@ -43,16 +43,16 @@ export default function ModulesPanel( {
 								size="compact"
 								onClick={ () => onOpen( module.id ) }
 							>
-								{ __( 'Settings', 'munafa' ) }
+								{ __( 'Settings', 'auvrenth-cprt' ) }
 							</Button>
 						) }
 					</div>
 				);
 			} ) }
-			<p className="munafa-card__note">
+			<p className="cprt-card__note">
 				{ __(
 					'A module that is on gets its own tab. Save to apply.',
-					'munafa'
+					'auvrenth-cprt'
 				) }
 			</p>
 		</div>

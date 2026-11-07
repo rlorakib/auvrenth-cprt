@@ -2,14 +2,14 @@
 /**
  * Settings REST API.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Rest;
+namespace Cprt\Rest;
 
-use Munafa\Modules\Registry;
-use Munafa\Settings\Settings;
-use Munafa\Tools\Recalculator;
+use Cprt\Modules\Registry;
+use Cprt\Settings\Settings;
+use Cprt\Tools\Recalculator;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -17,7 +17,7 @@ use WP_REST_Server;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * `munafa/v1/settings` and `munafa/v1/recalculate`, used by the settings screen.
+ * `cprt/v1/settings` and `cprt/v1/recalculate`, used by the settings screen.
  */
 final class SettingsController {
 

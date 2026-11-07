@@ -2,10 +2,10 @@
 /**
  * Report date range.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Reports;
+namespace Cprt\Reports;
 
 use DateInterval;
 use DateTimeImmutable;
@@ -14,7 +14,7 @@ use DateTimeZone;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Whole days in the site's timezone, converted to the GMT range stored in the Munafa tables.
+ * Whole days in the site's timezone, converted to the GMT range stored in the Auvrenth CPRT tables.
  */
 final class DateRange {
 

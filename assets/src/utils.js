@@ -2,7 +2,7 @@
  * Formatting and date helpers shared by the dashboard components.
  */
 
-const settings = window.munafaSettings || {};
+const settings = window.cprtSettings || {};
 
 export const CURRENCY = settings.currency || '৳';
 export const TODAY = settings.today || new Date().toISOString().slice( 0, 10 );

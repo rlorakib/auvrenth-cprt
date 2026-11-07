@@ -1,4 +1,4 @@
-=== Munafa – COD Profit & Return Tracker for WooCommerce ===
+=== Auvrenth COD Profit & Return Tracker for WooCommerce ===
 Contributors: auvrenthstudio
 Tags: woocommerce, cash on delivery, profit, returns, courier
 Requires at least: 6.5
@@ -13,14 +13,14 @@ See the real net profit of every cash on delivery order: product cost, courier c
 
 == Description ==
 
-Revenue is not profit. A cash on delivery (COD) order that is returned costs you the courier charge both ways, and often the packaging too. Munafa ("profit" in Bangla) shows what each order really earned, and what each return really cost.
+Revenue is not profit. A cash on delivery (COD) order that is returned costs you the courier charge both ways, and often the packaging too. This plugin shows what each order really earned, and what each return really cost.
 
 It is built for COD sellers in Bangladesh and the rest of South Asia, but nothing is tied to one country. Courier zones, payment method fees, return reasons and currency are all your own settings.
 
 = What you get =
 
 * **Net profit on every order.** Revenue minus product cost, courier charge, packaging, COD charge and gateway fee. Shown in a small box on the order page.
-* **Return loss.** Mark an order as "Returned" (single order or bulk action) and Munafa counts the courier charge you pay for the trip out and back, plus the fee. Revenue and product cost drop to zero, and the stock goes back.
+* **Return loss.** Mark an order as "Returned" (single order or bulk action) and Auvrenth counts the courier charge you pay for the trip out and back, plus the fee. Revenue and product cost drop to zero, and the stock goes back.
 * **Dashboard.** Revenue, net profit, margin, return rate and return loss with comparison to the previous period. A profit trend chart, your most profitable and loss-making products, and returns by area and by reason.
 * **Product cost.** Uses the WooCommerce cost of goods field when your store has it, otherwise a "Cost price" field on simple and variable products. Orders with a missing cost are flagged so you do not trust an overstated profit.
 * **Your own courier zones.** Name a zone, pick the states or countries it covers, and set the delivery charge and the return charge percentage. Everything else falls into "Everywhere else". You can also override the courier charge on a single order.
@@ -36,15 +36,19 @@ It is built for COD sellers in Bangladesh and the rest of South Asia, but nothin
 
 = Privacy =
 
-Munafa does not send any data anywhere and does not load anything from outside your site. Profit figures are stored in two tables in your own database. If you turn on "Delete all Munafa data when the plugin is deleted" in the settings, deleting the plugin removes those tables and its settings. Your orders and products are never touched, only the data Munafa added to them.
+This plugin does not send any data anywhere and does not load anything from outside your site. Profit figures are stored in two tables in your own database. If you turn on "Delete all Auvrenth data when the plugin is deleted" in the settings, deleting the plugin removes those tables and its settings. Your orders and products are not changed, apart from stock levels going back up when an order is marked "Returned".
+
+= Source code =
+
+The dashboard is built from the readable source in `assets/src` (included in this plugin) and at https://github.com/rlorakib/munafa. Run `npm install` then `npm run build` to regenerate `assets/build`. Charts use Recharts (MIT, https://github.com/recharts/recharts).
 
 == Installation ==
 
 1. Make sure WooCommerce is installed and active.
-2. Install Munafa from the Plugins screen, or upload the `munafa` folder to `/wp-content/plugins/`, then activate it.
-3. Go to WooCommerce → Munafa Settings and set your courier zones, payment method fees and the statuses you count in reports.
+2. Install Auvrenth from the Plugins screen, or upload the `auvrenth-cprt` folder to `/wp-content/plugins/`, then activate it.
+3. Go to WooCommerce → Auvrenth Settings and set your courier zones, payment method fees and the statuses you count in reports.
 4. Add a cost price to your products.
-5. Open WooCommerce → Munafa for your dashboard. Existing orders are calculated in the background.
+5. Open WooCommerce → Auvrenth for your dashboard. Existing orders are calculated in the background.
 
 == Frequently Asked Questions ==
 
@@ -54,7 +58,7 @@ No. There are no country names, gateways or currencies built in. You set your ow
 
 = Where do I enter what my products cost me? =
 
-On the product edit screen, in the General tab ("Cost price"). If your WooCommerce already has its own cost of goods field, Munafa uses that instead. Variations can have their own cost, or use the parent product's.
+On the product edit screen, in the General tab ("Cost price"). If your WooCommerce already has its own cost of goods field, Auvrenth uses that instead. Variations can have their own cost, or use the parent product's.
 
 = How is a returned order counted? =
 
@@ -62,7 +66,7 @@ As a loss: the courier charge for going out and coming back, plus the gateway fe
 
 = Will it change my orders or products? =
 
-No. Munafa only adds its own data next to them. Your orders, products and customers are never modified, except that the "Returned" status is added and the order statuses you pick are yours to change.
+Mostly no. It adds its own data next to them. The exceptions: it adds the "Returned" status, and when an order is marked "Returned" the products go back in stock (only if WooCommerce had reduced the stock).
 
 = Can I use it with the block checkout? =
 
@@ -76,8 +80,8 @@ Not yet. Ad spend import and courier payment reconciliation are planned for late
 
 1. The profit dashboard: KPI cards, trend chart and top products.
 2. Returns by area and by reason.
-3. The Munafa box on an order with its profit breakdown.
-4. Courier zones in Munafa Settings.
+3. The Auvrenth box on an order with its profit breakdown.
+4. Courier zones in Auvrenth Settings.
 5. The cost price field on a product.
 
 == Changelog ==

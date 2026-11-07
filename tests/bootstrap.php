@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap for unit tests that don't load WordPress.
  *
- * @package Munafa
+ * @package Cprt
  */
 
 define( 'ABSPATH', __DIR__ . '/' );

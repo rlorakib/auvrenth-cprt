@@ -2,17 +2,17 @@
 /**
  * WooCommerce feature compatibility declarations.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa;
+namespace Cprt;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Tells WooCommerce which of its features Munafa supports.
+ * Tells WooCommerce which of its features Auvrenth CPRT supports.
  */
 final class Compatibility {
 
@@ -26,7 +26,7 @@ final class Compatibility {
 			return;
 		}
 
-		FeaturesUtil::declare_compatibility( 'custom_order_tables', MUNAFA_FILE, true );
-		FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', MUNAFA_FILE, true );
+		FeaturesUtil::declare_compatibility( 'custom_order_tables', CPRT_FILE, true );
+		FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', CPRT_FILE, true );
 	}
 }

@@ -2,10 +2,10 @@
 /**
  * Module list and on/off state.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Modules;
+namespace Cprt\Modules;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ final class Registry {
 	/**
 	 * Option with the on/off state of each module, keyed by module ID.
 	 */
-	const OPTION = 'munafa_modules';
+	const OPTION = 'cprt_modules';
 
 	/**
 	 * Modules keyed by ID, once collected.
@@ -37,11 +37,11 @@ final class Registry {
 		}
 
 		/**
-		 * Filters Munafa's modules. Add-ons append an instance of their Module subclass.
+		 * Filters Auvrenth CPRT's modules. Add-ons append an instance of their Module subclass.
 		 *
 		 * @param Module[] $modules Modules.
 		 */
-		$modules = apply_filters( 'munafa_modules', array( new Checkout\CheckoutModule() ) );
+		$modules = apply_filters( 'cprt_modules', array( new Checkout\CheckoutModule() ) );
 
 		self::$modules = array();
 		foreach ( (array) $modules as $module ) {

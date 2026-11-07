@@ -2,12 +2,12 @@
 /**
  * Keeps stored profit in step with order changes.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Orders;
+namespace Cprt\Orders;
 
-use Munafa\Profit\OrderProfit;
+use Cprt\Profit\OrderProfit;
 
 defined( 'ABSPATH' ) || exit;
 

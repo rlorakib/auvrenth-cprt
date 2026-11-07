@@ -1,14 +1,14 @@
 <?php
 /**
- * WooCommerce → Munafa and Munafa Settings pages.
+ * WooCommerce → Auvrenth CPRT and Auvrenth CPRT Settings pages.
  *
- * @package Munafa
+ * @package Cprt
  */
 
-namespace Munafa\Admin;
+namespace Cprt\Admin;
 
-use Munafa\Reports\Repository;
-use Munafa\Settings\Settings;
+use Cprt\Reports\Repository;
+use Cprt\Settings\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,12 +20,12 @@ final class DashboardPage {
 	/**
 	 * Dashboard page slug.
 	 */
-	const SLUG = 'munafa';
+	const SLUG = 'auvrenth-cprt';
 
 	/**
 	 * Settings page slug.
 	 */
-	const SETTINGS_SLUG = 'munafa-settings';
+	const SETTINGS_SLUG = 'cprt-settings';
 
 	/**
 	 * Hook suffixes returned by add_submenu_page(), mapped to the view they show.
@@ -56,16 +56,16 @@ final class DashboardPage {
 	public static function add_menu(): void {
 		$dashboard = add_submenu_page(
 			'woocommerce',
-			__( 'Munafa – Profit dashboard', 'munafa' ),
-			__( 'Munafa', 'munafa' ),
+			__( 'Auvrenth CPRT – Profit dashboard', 'auvrenth-cprt' ),
+			__( 'Auvrenth CPRT', 'auvrenth-cprt' ),
 			'manage_woocommerce',
 			self::SLUG,
 			array( self::class, 'render_dashboard' )
 		);
 		$settings  = add_submenu_page(
 			'woocommerce',
-			__( 'Munafa settings', 'munafa' ),
-			__( 'Munafa Settings', 'munafa' ),
+			__( 'Auvrenth CPRT settings', 'auvrenth-cprt' ),
+			__( 'Auvrenth CPRT Settings', 'auvrenth-cprt' ),
 			'manage_woocommerce',
 			self::SETTINGS_SLUG,
 			array( self::class, 'render_settings' )
@@ -83,18 +83,18 @@ final class DashboardPage {
 	 * Dashboard markup; React mounts into the div.
 	 */
 	public static function render_dashboard(): void {
-		echo '<div class="wrap"><div id="munafa-dashboard" data-view="dashboard"></div></div>';
+		echo '<div class="wrap"><div id="cprt-dashboard" data-view="dashboard"></div></div>';
 	}
 
 	/**
 	 * Settings markup; React mounts into the div.
 	 */
 	public static function render_settings(): void {
-		echo '<div class="wrap"><div id="munafa-dashboard" data-view="settings"></div></div>';
+		echo '<div class="wrap"><div id="cprt-dashboard" data-view="settings"></div></div>';
 	}
 
 	/**
-	 * Load the app bundle on Munafa's pages only.
+	 * Load the app bundle on Auvrenth CPRT's pages only.
 	 *
 	 * @param string $hook_suffix Current admin page.
 	 */
@@ -103,13 +103,13 @@ final class DashboardPage {
 			return;
 		}
 
-		$asset_file = MUNAFA_PATH . 'assets/build/index.asset.php';
+		$asset_file = CPRT_PATH . 'assets/build/index.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			add_action(
 				'admin_notices',
 				static function () {
 					echo '<div class="notice notice-error"><p>';
-					echo esc_html__( 'Munafa: the dashboard is not built yet. Run "npm install" and "npm run build" in the plugin folder.', 'munafa' );
+					echo esc_html__( 'Auvrenth CPRT: the dashboard is not built yet. Run "npm install" and "npm run build" in the plugin folder.', 'auvrenth-cprt' );
 					echo '</p></div>';
 				}
 			);
@@ -118,19 +118,19 @@ final class DashboardPage {
 
 		$asset = require $asset_file;
 
-		wp_enqueue_script( 'munafa-dashboard', MUNAFA_URL . 'assets/build/index.js', $asset['dependencies'], $asset['version'], true );
-		wp_set_script_translations( 'munafa-dashboard', 'munafa', MUNAFA_PATH . 'languages' );
+		wp_enqueue_script( 'cprt-dashboard', CPRT_URL . 'assets/build/index.js', $asset['dependencies'], $asset['version'], true );
+		wp_set_script_translations( 'cprt-dashboard', 'auvrenth-cprt', CPRT_PATH . 'languages' );
 
 		wp_enqueue_style( 'wp-components' );
-		if ( file_exists( MUNAFA_PATH . 'assets/build/style-index.css' ) ) {
-			wp_enqueue_style( 'munafa-dashboard', MUNAFA_URL . 'assets/build/style-index.css', array( 'wp-components' ), $asset['version'] );
+		if ( file_exists( CPRT_PATH . 'assets/build/style-index.css' ) ) {
+			wp_enqueue_style( 'cprt-dashboard', CPRT_URL . 'assets/build/style-index.css', array( 'wp-components' ), $asset['version'] );
 			// The build writes style-index-rtl.css for right-to-left languages such as Urdu.
-			wp_style_add_data( 'munafa-dashboard', 'rtl', 'replace' );
+			wp_style_add_data( 'cprt-dashboard', 'rtl', 'replace' );
 		}
 
 		wp_add_inline_script(
-			'munafa-dashboard',
-			'window.munafaSettings = ' . wp_json_encode(
+			'cprt-dashboard',
+			'window.cprtSettings = ' . wp_json_encode(
 				array(
 					// WooCommerce stores symbols as HTML entities ("&#2547;"); React prints text as is.
 					'currency'      => html_entity_decode( Settings::currency_symbol(), ENT_QUOTES, 'UTF-8' ),
