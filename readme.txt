@@ -40,7 +40,7 @@ This plugin does not send any data anywhere and does not load anything from outs
 
 = Source code =
 
-The dashboard is built from the readable source in `assets/src` (included in this plugin) and at https://github.com/rlorakib/munafa. Run `npm install` then `npm run build` to regenerate `assets/build`. Charts use Recharts (MIT, https://github.com/recharts/recharts).
+The dashboard is built from the readable source in `assets/src` (included in this plugin) and at https://github.com/rlorakib/auvrenth-cprt. Run `npm install` then `npm run build` to regenerate `assets/build`. Charts use Recharts (MIT, https://github.com/recharts/recharts).
 
 == Installation ==
 

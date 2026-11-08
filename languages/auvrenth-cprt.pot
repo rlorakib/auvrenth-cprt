@@ -2,57 +2,57 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Munafa – COD Profit & Return Tracker for WooCommerce 0.1.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/munafa\n"
+"Project-Id-Version: Auvrenth COD Profit & Return Tracker for WooCommerce 0.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/auvrenth-cprt\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-02T17:05:00+00:00\n"
+"POT-Creation-Date: 2026-11-08T15:49:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: munafa\n"
+"X-Domain: auvrenth-cprt\n"
 
 #. Plugin Name of the plugin
-#: munafa.php
-msgid "Munafa – COD Profit & Return Tracker for WooCommerce"
+#: auvrenth-cprt.php
+msgid "Auvrenth COD Profit & Return Tracker for WooCommerce"
 msgstr ""
 
 #. Description of the plugin
-#: munafa.php
+#: auvrenth-cprt.php
 msgid "See the real net profit of every COD order: product cost, courier charge, fees and return loss."
 msgstr ""
 
 #. Author of the plugin
-#: munafa.php
+#: auvrenth-cprt.php
 msgid "Auvrenth Studio"
 msgstr ""
 
-#: munafa.php:32
-msgid "Munafa: dependencies are missing. Run \"composer install\" in the plugin folder."
+#: auvrenth-cprt.php:32
+msgid "Auvrenth CPRT: dependencies are missing. Run \"composer install\" in the plugin folder."
 msgstr ""
 
 #: src/Admin/DashboardPage.php:59
-#: assets/build/index.js:4
-msgid "Munafa – Profit dashboard"
+#: assets/src/App.js:102
+msgid "Auvrenth CPRT – Profit dashboard"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:60
-msgid "Munafa"
+msgid "Auvrenth CPRT"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:67
-#: assets/build/index.js:10
-msgid "Munafa settings"
+#: assets/src/settings/SettingsApp.js:328
+msgid "Auvrenth CPRT settings"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:68
-msgid "Munafa Settings"
+msgid "Auvrenth CPRT Settings"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:112
-msgid "Munafa: the dashboard is not built yet. Run \"npm install\" and \"npm run build\" in the plugin folder."
+msgid "Auvrenth CPRT: the dashboard is not built yet. Run \"npm install\" and \"npm run build\" in the plugin folder."
 msgstr ""
 
 #: src/Modules/Checkout/CheckoutModule.php:51
@@ -82,7 +82,7 @@ msgid "%1$s is not a valid phone number. Accepted formats: %2$s"
 msgstr ""
 
 #: src/Orders/MetaBox.php:44
-msgid "Munafa – Profit"
+msgid "Auvrenth CPRT – Profit"
 msgstr ""
 
 #: src/Orders/MetaBox.php:75
@@ -90,8 +90,9 @@ msgid "Profit is calculated after the order is saved."
 msgstr ""
 
 #: src/Orders/MetaBox.php:81
-#: assets/build/index.js:2
-#: assets/build/index.js:4
+#: assets/src/components/KpiCards.js:51
+#: assets/src/components/ProductsTable.js:27
+#: assets/src/components/TrendChart.js:120
 msgid "Revenue"
 msgstr ""
 
@@ -116,13 +117,13 @@ msgid "Return charge"
 msgstr ""
 
 #: src/Orders/MetaBox.php:87
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:205
 msgid "Packaging"
 msgstr ""
 
 #: src/Orders/MetaBox.php:107
-#: assets/build/index.js:2
-#: assets/build/index.js:4
+#: assets/src/components/KpiCards.js:61
+#: assets/src/components/TrendChart.js:126
 msgid "Net profit"
 msgstr ""
 
@@ -131,11 +132,11 @@ msgid "Some products in this order have no cost price, so profit is shown higher
 msgstr ""
 
 #: src/Orders/MetaBox.php:133
-msgid "Munafa is not set up yet, so courier charges and fees may be wrong."
+msgid "Auvrenth CPRT is not set up yet, so courier charges and fees may be wrong."
 msgstr ""
 
 #: src/Orders/MetaBox.php:135
-msgid "Set up Munafa"
+msgid "Set up Auvrenth CPRT"
 msgstr ""
 
 #. translators: %s: currency symbol
@@ -184,7 +185,7 @@ msgid "Cost price (%s)"
 msgstr ""
 
 #: src/Products/CostField.php:59
-msgid "What one unit costs you. Munafa uses it to calculate order profit."
+msgid "What one unit costs you. Auvrenth CPRT uses it to calculate order profit."
 msgstr ""
 
 #: src/Products/CostField.php:95
@@ -205,7 +206,7 @@ msgstr ""
 
 #. translators: 1: state or district, 2: country
 #: src/Reports/Repository.php:321
-#: assets/build/index.js:9
+#: assets/src/settings/ZonesEditor.js:38
 #, php-format,js-format
 msgid "%1$s, %2$s"
 msgstr ""
@@ -220,13 +221,13 @@ msgstr ""
 
 #: src/Settings/Settings.php:70
 #: src/Settings/Settings.php:290
-#: assets/build/index.js:10
+#: assets/src/settings/ZonesEditor.js:247
 msgid "Everywhere else"
 msgstr ""
 
 #. translators: %d: zone number
 #: src/Settings/Settings.php:255
-#: assets/build/index.js:10
+#: assets/src/settings/ZonesEditor.js:158
 #, php-format,js-format
 msgid "Zone %d"
 msgstr ""
@@ -295,455 +296,457 @@ msgstr ""
 msgid "The return charge for \"%1$s\" must be between 0 and %2$d%%."
 msgstr ""
 
-#: assets/build/index.js:1
-msgid "Today"
+#: assets/src/App.js:114
+msgid "Auvrenth CPRT is not set up yet, so courier charges and fees in these numbers may be wrong."
 msgstr ""
 
-#: assets/build/index.js:1
-msgid "Last 7 days"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "Last 30 days"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "Last 90 days"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "This month"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "Custom range"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "Period"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "From"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "To"
-msgstr ""
-
-#: assets/build/index.js:1
-msgid "No data for the previous period"
-msgstr ""
-
-#. translators: 1: ▲ or ▼, 2: percentage change
-#: assets/build/index.js:2
-#, js-format
-msgid "%1$s %2$s vs previous period"
-msgstr ""
-
-#: assets/build/index.js:2
-msgid "Margin"
-msgstr ""
-
-#. translators: %s: number of orders
-#: assets/build/index.js:3
-#, js-format
-msgid "%s orders"
-msgstr ""
-
-#: assets/build/index.js:3
-#: assets/build/index.js:4
-msgid "Return rate"
-msgstr ""
-
-#: assets/build/index.js:3
-msgid "Return loss"
-msgstr ""
-
-#. translators: %s: number of returned orders
-#: assets/build/index.js:4
-#, js-format
-msgid "%s returned orders"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Product"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Sold"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Returned"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Gross profit"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "No cost price"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Products"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Gross profit is revenue minus cost price, before courier charges and fees."
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Most profitable"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Loss making"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "No product made a loss in this period."
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "No sales in this period."
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Returns"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Why parcels came back"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Areas with the most returns"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Area"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Orders"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Loss"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "No returned orders in this period."
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Hourly"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Daily"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Weekly"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Revenue and profit"
-msgstr ""
-
-#: assets/build/index.js:4
-msgid "Munafa is not set up yet, so courier charges and fees in these numbers may be wrong."
-msgstr ""
-
-#: assets/build/index.js:4
+#: assets/src/App.js:119
 msgid "Set up courier zones and payment fees"
 msgstr ""
 
 #. translators: %d: number of orders
-#: assets/build/index.js:5
+#: assets/src/App.js:131
 #, js-format
 msgid "%d order has products without a cost price, so profit is shown higher than it really is."
 msgid_plural "%d orders have products without a cost price, so profit is shown higher than it really is."
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/build/index.js:5
+#: assets/src/App.js:140
 msgid "Add cost prices"
 msgstr ""
 
-#: assets/build/index.js:5
-msgid "Courier charges, fees and packaging come from your Munafa settings."
+#: assets/src/App.js:177
+msgid "Courier charges, fees and packaging come from your Auvrenth CPRT settings."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/App.js:182
 msgid "Change settings"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/components/DateRangePicker.js:10
+msgid "Today"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:11
+msgid "Last 7 days"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:12
+msgid "Last 30 days"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:13
+msgid "Last 90 days"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:14
+msgid "This month"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:15
+msgid "Custom range"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:41
+msgid "Period"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:53
+msgid "From"
+msgstr ""
+
+#: assets/src/components/DateRangePicker.js:62
+msgid "To"
+msgstr ""
+
+#: assets/src/components/KpiCards.js:20
+msgid "No data for the previous period"
+msgstr ""
+
+#. translators: 1: ▲ or ▼, 2: percentage change
+#: assets/src/components/KpiCards.js:35
+#, js-format
+msgid "%1$s %2$s vs previous period"
+msgstr ""
+
+#: assets/src/components/KpiCards.js:72
+msgid "Margin"
+msgstr ""
+
+#. translators: %s: number of orders
+#: assets/src/components/KpiCards.js:78
+#, js-format
+msgid "%s orders"
+msgstr ""
+
+#: assets/src/components/KpiCards.js:85
+#: assets/src/components/ReturnsReport.js:77
+msgid "Return rate"
+msgstr ""
+
+#: assets/src/components/KpiCards.js:97
+msgid "Return loss"
+msgstr ""
+
+#. translators: %s: number of returned orders
+#: assets/src/components/KpiCards.js:104
+#, js-format
+msgid "%s returned orders"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:24
+msgid "Product"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:25
+msgid "Sold"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:26
+#: assets/src/components/ReturnsReport.js:74
+msgid "Returned"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:29
+msgid "Gross profit"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:46
+msgid "No cost price"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:79
+msgid "Products"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:82
+msgid "Gross profit is revenue minus cost price, before courier charges and fees."
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:91
+msgid "Most profitable"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:93
+msgid "Loss making"
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:100
+msgid "No product made a loss in this period."
+msgstr ""
+
+#: assets/src/components/ProductsTable.js:108
+msgid "No sales in this period."
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:28
+msgid "Returns"
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:33
+msgid "No returned orders in this period."
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:37
+msgid "Why parcels came back"
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:64
+msgid "Areas with the most returns"
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:69
+msgid "Area"
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:71
+msgid "Orders"
+msgstr ""
+
+#: assets/src/components/ReturnsReport.js:80
+msgid "Loss"
+msgstr ""
+
+#: assets/src/components/TrendChart.js:53
+msgid "Hourly"
+msgstr ""
+
+#: assets/src/components/TrendChart.js:54
+msgid "Daily"
+msgstr ""
+
+#: assets/src/components/TrendChart.js:55
+msgid "Weekly"
+msgstr ""
+
+#: assets/src/components/TrendChart.js:72
+msgid "Revenue and profit"
+msgstr ""
+
+#: assets/src/settings/CheckoutSettings.js:59
 msgid "Last name"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:60
 msgid "Company"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:63
 msgid "Apartment, suite, etc. (address line 2)"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:65
 msgid "Town / City"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:66
 msgid "Postcode"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:69
 msgid "As WooCommerce has it"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:70
 msgid "Required"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:71
 msgid "Optional"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:72
 msgid "Hidden"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:88
 msgid "Checkout fields"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:91
 msgid "Fewer fields mean more finished orders. First name, address, state/district, country and phone always stay. Works with the Checkout block and the classic checkout."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:115
 msgid "Phone number check"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:118
 msgid "The courier calls this number, so a wrong one means a returned parcel. Orders whose phone fits none of these patterns are stopped at checkout. Leave empty to accept any number."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:126
 msgid "Customers can still leave the phone empty. Make Phone required in the Checkout block settings (classic checkout: Customize → WooCommerce → Checkout)."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:134
 msgid "Accepted patterns, one per line"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:135
 msgid "# is any digit; everything else must match exactly. For example, 01######### accepts 11-digit numbers starting with 01, and +8801######### the same number with the country code. Spaces, dashes and Bangla or Hindi digits are fine."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:154
 msgid "Try a number"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:164
 msgid "Accepted"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/CheckoutSettings.js:168
 msgid "Rejected"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/ModulesPanel.js:46
 msgid "Settings"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/ModulesPanel.js:53
 msgid "A module that is on gets its own tab. Save to apply."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/PaymentMethodsEditor.js:21
 msgid "WooCommerce has no payment methods."
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/PaymentMethodsEditor.js:37
 msgid "Payment method"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/PaymentMethodsEditor.js:38
 msgid "Cash on delivery"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/PaymentMethodsEditor.js:39
+#: assets/src/settings/PaymentMethodsEditor.js:74
 msgid "Fee (%)"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/PaymentMethodsEditor.js:51
 msgid "Disabled"
 msgstr ""
 
-#: assets/build/index.js:5
+#: assets/src/settings/PaymentMethodsEditor.js:57
 msgid "Courier collects cash"
 msgstr ""
 
 #. translators: %d: reason number
-#: assets/build/index.js:6
+#: assets/src/settings/ReturnReasonsEditor.js:30
 #, js-format
 msgid "Reason %d"
 msgstr ""
 
-#: assets/build/index.js:6
-#: assets/build/index.js:10
+#: assets/src/settings/ReturnReasonsEditor.js:48
+#: assets/src/settings/ZonesEditor.js:189
 msgid "Remove"
 msgstr ""
 
-#: assets/build/index.js:6
+#: assets/src/settings/ReturnReasonsEditor.js:58
 msgid "Add reason"
 msgstr ""
 
-#. translators: %s: currency symbol
-#: assets/build/index.js:7
-#, js-format
-msgid "Delivery charge (%s)"
+#: assets/src/settings/SettingsApp.js:118
+msgid "Settings saved. Recalculate your orders so old orders use them too."
 msgstr ""
 
-#: assets/build/index.js:7
-msgid "Return charge (% of delivery charge)"
-msgstr ""
-
-#: assets/build/index.js:7
-msgid "What the courier charges to bring a parcel back."
-msgstr ""
-
-#. translators: %s: country name
-#: assets/build/index.js:8
-#, js-format
-msgid "%s (all areas)"
-msgstr ""
-
-#: assets/build/index.js:9
-msgid "No zones yet. Every order uses \"Everywhere else\" until you add one."
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "Move up"
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "Move down"
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "Zone name"
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "e.g. Inside city"
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "Delivery areas"
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "Add zone"
-msgstr ""
-
-#: assets/build/index.js:10
-msgid "Used for addresses no zone above covers."
-msgstr ""
-
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:137
 msgid "Recalculating all orders in the background. This can take a few minutes on big stores."
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:166
 msgid "Profit"
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:168
 msgid "Modules"
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:169
 msgid "Advanced"
 msgstr ""
 
-#: assets/build/index.js:10
-msgid "Welcome! Add the courier charges and payment fees you pay, then save. Until then, profit uses whatever is below and may be wrong."
-msgstr ""
-
-#: assets/build/index.js:10
-#: assets/build/index.js:11
-msgid "Recalculate all orders"
-msgstr ""
-
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:175
 msgid "Courier zones"
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:176
 msgid "What your courier charges you per parcel, by delivery area. Each order uses the first zone that covers its address, or \"Everywhere else\"."
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:191
 msgid "Payment methods"
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:192
 msgid "Tick the methods where the courier collects cash. Their fee is the courier's COD charge; for the others it is the payment gateway fee."
 msgstr ""
 
-#: assets/build/index.js:10
+#: assets/src/settings/SettingsApp.js:206
 msgid "Box, poly bag, tape and printing for one parcel. Counted on delivered and returned orders."
 msgstr ""
 
 #. translators: %s: currency symbol
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:218
 #, js-format
 msgid "Packaging cost per order (%s)"
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:229
 msgid "Return reasons"
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:230
 msgid "Reasons you can pick on a returned order. Renaming one keeps it on old orders."
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:242
 msgid "Reports"
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:243
 msgid "Order statuses that count as sales (and returns) on the dashboard."
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:269
 msgid "Uninstall"
 msgstr ""
 
-#: assets/build/index.js:11
-msgid "When Munafa is deleted from the Plugins screen, also delete its profit data, settings, product cost prices and order courier charges. Your orders and products stay. This cannot be undone."
+#: assets/src/settings/SettingsApp.js:270
+msgid "When Auvrenth CPRT is deleted from the Plugins screen, also delete its profit data, settings, product cost prices and order courier charges. Your orders and products stay. This cannot be undone."
 msgstr ""
 
-#: assets/build/index.js:11
-msgid "Delete all Munafa data when the plugin is deleted"
+#: assets/src/settings/SettingsApp.js:276
+msgid "Delete all Auvrenth CPRT data when the plugin is deleted"
 msgstr ""
 
-#: assets/build/index.js:11
-msgid "Settings saved. Recalculate your orders so old orders use them too."
+#: assets/src/settings/SettingsApp.js:333
+msgid "Welcome! Add the courier charges and payment fees you pay, then save. Until then, profit uses whatever is below and may be wrong."
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:348
+#: assets/src/settings/SettingsApp.js:388
+msgid "Recalculate all orders"
+msgstr ""
+
+#: assets/src/settings/SettingsApp.js:379
 msgid "Save settings"
 msgstr ""
 
-#: assets/build/index.js:11
+#: assets/src/settings/SettingsApp.js:387
 msgid "Recalculating…"
+msgstr ""
+
+#. translators: %s: country name
+#: assets/src/settings/ZonesEditor.js:29
+#, js-format
+msgid "%s (all areas)"
+msgstr ""
+
+#. translators: %s: currency symbol
+#: assets/src/settings/ZonesEditor.js:65
+#, js-format
+msgid "Delivery charge (%s)"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:80
+msgid "Return charge (% of delivery charge)"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:81
+msgid "What the courier charges to bring a parcel back."
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:142
+msgid "No zones yet. Every order uses \"Everywhere else\" until you add one."
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:169
+msgid "Move up"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:177
+msgid "Move down"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:195
+msgid "Zone name"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:196
+msgid "e.g. Inside city"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:206
+msgid "Delivery areas"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:242
+msgid "Add zone"
+msgstr ""
+
+#: assets/src/settings/ZonesEditor.js:250
+msgid "Used for addresses no zone above covers."
 msgstr ""

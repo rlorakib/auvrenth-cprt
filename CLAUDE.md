@@ -31,7 +31,7 @@ The owner communicates in Banglish (Bangla in Latin script). Reply in the same s
 ## Layout
 
 ```
-munafa.php            Plugin header, constants, bootstrap
+auvrenth-cprt.php            Plugin header, constants, bootstrap
 uninstall.php
 src/                  PHP classes (Admin/, Rest/, Profit/, Db/, Settings/, Modules/)
 assets/src/           React source (dashboard, settings)

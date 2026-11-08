@@ -20,7 +20,7 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 - [ ] VS Code + Claude Code extension
 - [x] Plugin folder + git repo (`rlorakib/Munafa`)
 - [x] `CLAUDE.md` ei folder e rakhun
-- [x] Plugin skeleton: `munafa.php`, `src/Plugin.php`, `src/Compatibility.php` (HPOS + Blocks), composer.json, phpcs.xml.dist, package.json
+- [x] Plugin skeleton: `auvrenth-cprt.php`, `src/Plugin.php`, `src/Compatibility.php` (HPOS + Blocks), composer.json, phpcs.xml.dist, package.json
 
 **Claude ke bolben:**
 > Read CLAUDE.md. Set up the plugin skeleton: main plugin file, composer.json with PSR-4 autoload for `Munafa\` → `src/`, package.json with @wordpress/scripts, PHPCS with WordPress Coding Standards. Don't build features yet.
@@ -117,7 +117,7 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 - [x] Sob output escape, input sanitize, nonce check (code review kora, issue pai nai)
 - [x] i18n: `.pot` generate (`languages/`, `npm run make-pot`). Bangla (bn_BD) bundled translation soriye felechi, pore translate.wordpress.org e hobe
 - [ ] `uninstall.php` (setting e "delete data on uninstall" option) – code done, "delete on" path browser/local e test baki
-- [x] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error/warning (`wp plugin check Munafa --slug=munafa`; hidden file/md file release build e baad jay, `.distignore`)
+- [x] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error/warning (`wp plugin check Munafa --slug=auvrenth-cprt`; hidden file/md file release build e baad jay, `.distignore`)
 - [ ] PHP 7.4 / 8.1 / 8.3 + latest 2 WooCommerce version e test (phpcs PHPCompatibility clean, runtime test baki)
 - [x] `readme.txt`, banner, icon (`wp-org-assets/munafa/`)
 - [ ] 5 ta screenshot (real Munafa screen theke, `wp-org-showcase/` er gulo onno plugin er)
