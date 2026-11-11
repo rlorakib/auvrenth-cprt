@@ -78,10 +78,10 @@ Not yet. Ad spend import and courier payment reconciliation are planned for late
 
 == Screenshots ==
 
-1. The profit dashboard: KPI cards, trend chart and top products.
-2. Returns by area and by reason.
-3. The Auvrenth box on an order with its profit breakdown.
-4. Courier zones in Auvrenth Settings.
+1. The profit dashboard: revenue, net profit, margin, return rate and return loss, with a daily revenue and profit chart.
+2. Most profitable products, and returns by reason and by area.
+3. The profit box on an order: product cost, courier charge, COD charge, packaging and net profit.
+4. Courier zones and payment method fees in Auvrenth CPRT Settings.
 5. The cost price field on a product.
 
 == Changelog ==

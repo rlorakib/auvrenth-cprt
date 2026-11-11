@@ -1,4 +1,4 @@
-# Munafa – COD Profit & Return Tracker for WooCommerce
+# Auvrenth – COD Profit & Return Tracker for WooCommerce
 
 WooCommerce plugin that shows the real net profit of each order for COD sellers
 (Bangladesh / South Asia): product cost, courier charge, COD/gateway fee, return loss.
@@ -11,22 +11,23 @@ The owner communicates in Banglish (Bangla in Latin script). Reply in the same s
 
 - PHP 7.4+ (OOP, namespaces, PSR-4 via Composer), WordPress 6.5+, WooCommerce 9.0+
 - Admin UI: React via `@wordpress/scripts`, `@wordpress/components`, `@wordpress/api-fetch`;
-  charts with Recharts. One bundle serves WooCommerce → Munafa (dashboard) and
-  WooCommerce → Munafa Settings (`data-view` on the mount div picks the screen)
+  charts with Recharts. One bundle serves WooCommerce → Auvrenth CPRT (dashboard) and
+  WooCommerce → Auvrenth CPRT Settings (`data-view` on the mount div picks the screen)
 - Small UI pieces (product cost field, order meta box) are plain PHP, not React
-- Data: custom tables `{$wpdb->prefix}munafa_order_profit` and `munafa_order_items`,
-  REST namespace `munafa/v1`; every setting lives in `Settings\Settings`
+- Data: custom tables `{$wpdb->prefix}cprt_order_profit` and `cprt_order_items`,
+  REST namespace `cprt/v1`; every setting lives in `Settings\Settings`
 - Node.js lives in Herd's nvm (`C:\Users\rlora\.config\herd\bin\nvm\v24.22.1`); put it on PATH
   before `npm` commands if `node` is not found
 - Background jobs: Action Scheduler (bundled with WooCommerce)
 
 ## Naming
 
-- Text domain / slug: `munafa`
-- PHP namespace: `Munafa\` → `src/`
-- Global functions, hooks, options, meta keys: prefix `munafa_` / `_munafa_`
-- Constants: `MUNAFA_` (e.g. `MUNAFA_VERSION`, `MUNAFA_FILE`)
-- JS handles and CSS classes: `munafa-`
+- Plugin name: Auvrenth (admin menu label: "Auvrenth CPRT")
+- Text domain / slug: `auvrenth-cprt`
+- PHP namespace: `Cprt\` → `src/`
+- Global functions, hooks, options, meta keys: prefix `cprt_` / `_cprt_`
+- Constants: `CPRT_` (e.g. `CPRT_VERSION`, `CPRT_FILE`)
+- JS handles and CSS classes: `cprt-`; JS hooks: `cprt.`
 
 ## Layout
 
@@ -47,17 +48,17 @@ readme.txt            WordPress.org readme
 - `npm run build` – production JS build
 - `composer phpcs` – WordPress Coding Standards check
 - `composer test` – PHPUnit
-- `npm run make-pot` – regenerate languages/munafa.pot
+- `npm run make-pot` – regenerate languages/auvrenth-cprt.pot
 
 ## Rules
 
 - Follow WordPress Coding Standards; keep `composer phpcs` clean
 - Declare HPOS (`custom_order_tables`) and `cart_checkout_blocks` compatibility.
   Never read order data with `get_post_meta` – use `wc_get_order()` and order getters
-- Prefer WooCommerce's native COGS field when available; fall back to `_munafa_cost` meta
+- Prefer WooCommerce's native COGS field when available; fall back to `_cprt_cost` meta
 - Escape all output (`esc_html`, `esc_attr`, `wp_kses_post`), sanitize all input,
   verify nonces, check `current_user_can( 'manage_woocommerce' )` on admin actions and REST routes
-- All user-facing strings translatable with the `munafa` text domain
+- All user-facing strings translatable with the `auvrenth-cprt` text domain
 - Money: `Profit\Calculator` rounds every amount to 2 decimals before adding it up; the table
   stores `DECIMAL(19,4)`; product costs are saved with `wc_format_decimal()`
 - Keep `Profit\Calculator` and `Profit\ZoneMatcher` free of WordPress/WooCommerce calls so they stay unit-testable
@@ -67,10 +68,10 @@ readme.txt            WordPress.org readme
 - A schema change bumps `Installer::DB_VERSION`; a settings shape change bumps `Settings::VERSION`
   and adds a step to `Settings::maybe_migrate()`
 - One plugin, no separate plugins per feature. A feature the seller can turn on/off is a module:
-  a `Modules\Module` subclass listed in `Modules\Registry` (add-ons and Pro use the `munafa_modules`
+  a `Modules\Module` subclass listed in `Modules\Registry` (add-ons and Pro use the `cprt_modules`
   filter). Its hooks run only while it is on; its settings are saved through `Settings\Settings`
-  and edited on its own tab of Munafa Settings (React panel registered in `modulePanels()`, add-ons
-  via the `munafa.settings.modulePanels` JS filter). New modules start off by default
+  and edited on its own tab of Auvrenth CPRT Settings (React panel registered in `modulePanels()`, add-ons
+  via the `cprt.settings.modulePanels` JS filter). New modules start off by default
 - Heavy work (recalculating many orders) goes through Action Scheduler in batches
 - No external CSS frameworks (Tailwind/Bootstrap) in wp-admin
 - Pro-only code stays behind Freemius checks and out of the WordPress.org build

@@ -1,4 +1,4 @@
-# Munafa – Roadmap
+# Auvrenth – Roadmap
 
 COD Profit & Return Tracker for WooCommerce.
 Target: Bangladesh / South Asia COD sellers.
@@ -23,7 +23,7 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 - [x] Plugin skeleton: `auvrenth-cprt.php`, `src/Plugin.php`, `src/Compatibility.php` (HPOS + Blocks), composer.json, phpcs.xml.dist, package.json
 
 **Claude ke bolben:**
-> Read CLAUDE.md. Set up the plugin skeleton: main plugin file, composer.json with PSR-4 autoload for `Munafa\` → `src/`, package.json with @wordpress/scripts, PHPCS with WordPress Coding Standards. Don't build features yet.
+> Read CLAUDE.md. Set up the plugin skeleton: main plugin file, composer.json with PSR-4 autoload for `Cprt\` → `src/`, package.json with @wordpress/scripts, PHPCS with WordPress Coding Standards. Don't build features yet.
 
 **Done when:** Plugin activate hoy, kono error/notice nai, `npm run build` ar `composer phpcs` chole.
 
@@ -34,14 +34,14 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 **Goal:** Protiti order er profit hishab hobe ar save hobe.
 
 - [x] HPOS + Cart/Checkout Blocks compatibility declare
-- [x] Activation e custom table `{prefix}munafa_order_profit` create (dbDelta)
-- [x] Product cost: WooCommerce native COGS field use, na thakle nijer `_munafa_cost` meta field (simple + variable product)
-- [x] Settings: default courier charge (inside Dhaka / outside Dhaka), COD charge %, gateway fee % (WooCommerce → Settings → Munafa)
+- [x] Activation e custom table `{prefix}cprt_order_profit` create (dbDelta)
+- [x] Product cost: WooCommerce native COGS field use, na thakle nijer `_cprt_cost` meta field (simple + variable product)
+- [x] Settings: default courier charge (inside Dhaka / outside Dhaka), COD charge %, gateway fee % (WooCommerce → Settings → Auvrenth CPRT)
 - [x] Order create/save/refund hook e profit calculate → table e save, trash/delete e row muche jay
-- [x] Order edit page e chhoto "Munafa" meta box: revenue, cost, courier, profit
+- [x] Order edit page e chhoto "Auvrenth CPRT – Profit" meta box: revenue, cost, courier, profit
 - [x] Purono order er jonno "Recalculate all" tool (Action Scheduler diye batch e), install er por nije-i chole
 - [x] Calculator unit test (PHPUnit, `composer test`)
-- [ ] Browser e nije check: order page er meta box, product page er cost field, Munafa settings tab
+- [ ] Browser e nije check: order page er meta box, product page er cost field, Auvrenth CPRT settings tab
 
 **Claude ke bolben:**
 > Plan first (use plan mode). Implement Phase 1 from ROADMAP.md. Start with the DB table and the profit calculator class with unit tests, then hooks, then the meta box.
@@ -58,10 +58,10 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 - [x] Return hole loss = jawa + asha courier charge (return charge % setting) + gateway fee; revenue ar product cost 0, stock ferot ashe
 - [x] Packaging cost setting, sob order e (delivered + returned)
 - [x] Order theke district/area save (shipping state, na thakle billing state)
-- [x] Per-order courier charge manually edit korar option (order page er Munafa box e)
+- [x] Per-order courier charge manually edit korar option (order page er Auvrenth CPRT box e)
 - [x] Return reason dropdown (customer refused, wrong address, phone off, not available, other)
 - [x] "Change status to returned" bulk action
-- [ ] Browser e nije check: Returned status, bulk action, Munafa box er notun field
+- [ ] Browser e nije check: Returned status, bulk action, Auvrenth CPRT box er notun field
 
 **Done when:** Returned order e profit negative dekhay, reason save hoy.
 
@@ -69,16 +69,16 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 ## Phase 3 – React dashboard (Week 6–7)
 
-**Goal:** WooCommerce → Munafa menu te sundor dashboard.
+**Goal:** WooCommerce → Auvrenth CPRT menu te sundor dashboard.
 
-- [x] REST API: `munafa/v1/summary`, `/trend`, `/products`, `/returns` (capability: `manage_woocommerce`)
+- [x] REST API: `cprt/v1/summary`, `/trend`, `/products`, `/returns` (capability: `manage_woocommerce`)
 - [x] KPI card: total revenue, net profit, margin %, return rate, return loss (ager period er tulona soho)
 - [x] Profit trend chart (daily/weekly), Recharts diye
 - [x] Top profitable + loss making products table (plain table, DataViews lage nai)
 - [x] Return by district + by reason
 - [x] Date range filter (today, 7d, 30d, 90d, this month, custom)
-- [x] Product-wise data er jonno `munafa_order_items` table
-- [x] Settings page React e (WooCommerce → Munafa Settings, niche "South Asia ready" dekhun)
+- [x] Product-wise data er jonno `cprt_order_items` table
+- [x] Settings page React e (WooCommerce → Auvrenth CPRT Settings, niche "South Asia ready" dekhun)
 - [x] Browser e nije check: dashboard desktop (full width fix)
 - [ ] Browser e nije check: dashboard mobile, 1 second e load
 
@@ -102,10 +102,10 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 ## Phase 3.6 – Module system + Simple checkout (free)
 
-**Goal:** Ek plugin, alada plugin na. Notun feature module hishebe on/off, shob setting Munafa Settings e.
+**Goal:** Ek plugin, alada plugin na. Notun feature module hishebe on/off, shob setting Auvrenth CPRT Settings e.
 
-- [x] Module system: `Modules\Module` + `Modules\Registry`, add-on er jonno `munafa_modules` filter
-- [x] Munafa Settings tab e bhag: Profit, (on thaka module er tab), Modules, Advanced
+- [x] Module system: `Modules\Module` + `Modules\Registry`, add-on er jonno `cprt_modules` filter
+- [x] Auvrenth CPRT Settings tab e bhag: Profit, (on thaka module er tab), Modules, Advanced
 - [x] Simple checkout module: last name, company, address line 2, city, postcode → default / required / optional / hidden (Checkout block + classic duitatei)
 - [x] Phone number check: seller er pattern (`01#########`), Bangla/Hindi digit o space/dash thik kore save
 - [ ] Browser e nije check: Modules tab e on, Checkout tab, block checkout e field lukano ar bhul phone e error
@@ -117,10 +117,10 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 - [x] Sob output escape, input sanitize, nonce check (code review kora, issue pai nai)
 - [x] i18n: `.pot` generate (`languages/`, `npm run make-pot`). Bangla (bn_BD) bundled translation soriye felechi, pore translate.wordpress.org e hobe
 - [ ] `uninstall.php` (setting e "delete data on uninstall" option) – code done, "delete on" path browser/local e test baki
-- [x] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error/warning (`wp plugin check Munafa --slug=auvrenth-cprt`; hidden file/md file release build e baad jay, `.distignore`)
+- [x] [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) e zero error/warning (`wp plugin check auvrenth-cprt --slug=auvrenth-cprt`; hidden file/md file release build e baad jay, `.distignore`)
 - [ ] PHP 7.4 / 8.1 / 8.3 + latest 2 WooCommerce version e test (phpcs PHPCompatibility clean, runtime test baki)
-- [x] `readme.txt`, banner, icon (`wp-org-assets/munafa/`)
-- [ ] 5 ta screenshot (real Munafa screen theke, `wp-org-showcase/` er gulo onno plugin er)
+- [x] `readme.txt`, banner, animated GIF icon (`wp-org-assets/auvrenth-cprt/`, source SVG + PNG icon `wp-org-assets/auvrenth-cprt-source/`)
+- [x] 5 ta screenshot (real Auvrenth CPRT screen theke, `wp-org-assets/auvrenth-cprt/screenshot-*.png`; demo data backup ar script `wp-org-assets/auvrenth-cprt-source/`)
 - [ ] `readme.txt` e `Contributors: auvrenthstudio` ei naam e wordpress.org account ache kina dekha
 
 **Claude ke bolben:**
@@ -131,7 +131,7 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 ## Phase 5 – Launch free version (Week 9)
 
 - [ ] WordPress.org e submit (review 1–4 week)
-- [ ] Review cholar shomoy: `munafa.app` landing page, docs, privacy policy
+- [ ] Review cholar shomoy: landing page, docs, privacy policy
 - [ ] 10–20 jon beta tester seller (Facebook group theke)
 - [ ] Bangla setup video (YouTube)
 
@@ -151,7 +151,7 @@ Total: ~12 weeks (part-time hole 16–18 weeks dhore rakhun)
 
 - WhatsApp/SMS COD confirmation
 - Courier API diye auto courier charge
-- **Munafa Orders**: Messenger → WooCommerce order (F-commerce Order Desk)
+- **Auvrenth Orders**: Messenger → WooCommerce order (F-commerce Order Desk)
 
 ---
 
